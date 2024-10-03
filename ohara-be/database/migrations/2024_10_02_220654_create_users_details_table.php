@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text("address");
             $table->string("phone");
             $table->timestamps();
-            $table->foreign("book_id")->references("id")->on("books");
+            $table->foreign("user_id")->references("id")->on("users");
         });
     }
 
