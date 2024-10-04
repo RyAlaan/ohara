@@ -13,9 +13,10 @@ import {
 import SidebarBtn from "../../components/SidebarBtnComponent/SidebarBtnComponent";
 import { useAuth } from "../../context/AuthContext/AuthContext";
 import { useLocation } from "react-router-dom";
+import { Skeleton } from "@mui/material";
 
 const SidebarLayout = () => {
-  const { user, handleLogout } = useAuth();
+  const { user, handleLogout, isLoading } = useAuth();
   const location = useLocation();
 
   const renderUserSidebar = () => (
@@ -86,7 +87,7 @@ const SidebarLayout = () => {
   );
 
   const renderSidebarContent = () => {
-    if (user?.role === "ADMIN") {
+    if (user?.role === "admin") {
       return location.pathname.includes("dashboard")
         ? renderDashboardSidebar()
         : renderAdminSidebar();
@@ -106,13 +107,17 @@ const SidebarLayout = () => {
         </div>
       </div>
       <div className="bottom">
-        <SidebarBtn
-          url={user ? "/auth/logout" : "/auth/login"}
-          onClick={handleLogout}
-        >
-          {user ? <Logout /> : <Login />}
-          {user ? "Logout" : "Login"}
-        </SidebarBtn>
+        {isLoading ? (
+          <Skeleton variant="rounded" width={"100%"} height={40} />
+        ) : (
+          <SidebarBtn
+            url={user ? "/auth/logout" : "/auth/login"}
+            onClick={handleLogout}
+          >
+            {user ? <Logout /> : <Login />}
+            {user ? "Logout" : "Login"}
+          </SidebarBtn>
+        )}
       </div>
     </div>
   );

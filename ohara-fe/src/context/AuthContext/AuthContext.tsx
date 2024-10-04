@@ -31,16 +31,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    setIsLoading(true);
+    const token = localStorage.getItem("token");
+
     axios
-      .get("http://localhost:3000/api/auth/me", {
-        withCredentials: true,
+      .get("http://localhost:8000/api/auth/authme", {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       })
-      .then((response) => {
-        if (response.data.statusCode === 200) {
-          setUser(response.data.data);
-        }
+      .then((res) => {
+        setUser(res.data.data.user);
+        console.log();
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -54,16 +63,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     setMessage("");
 
-    const data = {
+    const data = JSON.stringify({
       email: e.currentTarget.email.value,
       password: e.currentTarget.password.value,
-    };
+    });
 
     axios
-      .post("http://localhost:3000/api/auth/login", data, {
-        withCredentials: true,
+      .post("http://localhost:8000/api/auth/login", data, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
       })
-      .then(() => {
+      .then((res: any) => {
+        localStorage.setItem("token", res.data.data.token);
         window.location.href = "/";
       })
       .catch((error) => {
@@ -84,15 +97,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     setMessage("");
 
-    const data = {
+    const token = localStorage.getItem("token");
+
+    const data = JSON.stringify({
       name: e.currentTarget.username.value,
       email: e.currentTarget.email.value,
       password: e.currentTarget.password.value,
-    };
+    });
 
     axios
-      .post("http://localhost:3000/api/auth/register", data, {
-        withCredentials: true,
+      .post("http://localhost:8000/api/auth/register", data, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then(() => {
         window.location.href = "/auth/login";
@@ -107,14 +126,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleLogout = () => {
+    const token = localStorage.getItem("token");
+
     axios
       .post(
-        "http://localhost:3000/api/auth/logout",
+        "http://localhost:8000/api/auth/logout",
         {},
-        { withCredentials: true }
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
       .then(() => {
-        setUser(null)
+        setUser(null);
       });
   };
 

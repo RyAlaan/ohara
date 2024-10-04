@@ -5,62 +5,71 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
     /**
      * Handle register request.
+     * 
+     * @param Illuminate\Http\Request $request
+     *  @return \Illuminate\Http\JsonResponse
      */
     public function Register(Request $request)
     {
-        // validate data
+        //set validation
         $validator = Validator::make($request->all(), [
-            'name'    => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'name'      => 'required',
+            'email'     => 'required|email|unique:users',
+            'password'  => 'required|min:8|confirmed'
         ]);
 
+        //if validation fails
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
                 'statusCode' => 422,
-                'message' => $validator->errors()->first(),
+                'message' => $validator->errors(),
                 'data' => null,
             ], 422);
         }
 
-        // create data user
+        //create user
         $user = User::create([
             'name'      => $request->name,
             'email'     => $request->email,
             'password'  => bcrypt($request->password),
-            'role' => 'user',
+            'role'      => 'user',
         ]);
 
+        //return response JSON user is created
         if ($user) {
             return response()->json([
                 'status' => true,
                 'statusCode' => 201,
                 'message' => 'user registered successfully',
-                'data' => [
-                    'user' => $user
+                'data'    => [
+                    'user' => $user,
                 ],
             ], 201);
         }
 
-        // return error
+        //return JSON process insert failed 
         return response()->json([
             'status' => false,
             'statusCode' => 409,
-            'message' => 'registered user failed',
+            'message' => 'data user unable to create, please try again next time',
             'data' => null,
         ], 409);
     }
 
+    /**
+     * Handle login request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function Login(Request $request)
     {
         //set validation
@@ -74,7 +83,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'statusCode' => 422,
-                'message' => $validator->errors()->first(),
+                'message' => $validator->errors(),
                 'data' => null,
             ], 422);
         }
@@ -87,54 +96,65 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'statusCode' => 401,
-                'message' => "you're not unauthorized",
+                'message' => 'Email or Password is invalid',
                 'data' => null,
             ], 401);
         }
 
-        // return
+        //if auth success
         return response()->json([
             'status' => true,
             'statusCode' => 200,
-            'message' => "login success",
+            'message' => 'user authenticated',
             'data' => [
-                'user' => auth()->guard('api')->user(),
-                'token' => $token
-            ],
+                'user'    => auth()->guard('api')->user(),
+                'token'   => $token
+            ]
         ], 200);
     }
 
-    public function Me()
+    /**
+     * Handle authenticated user request.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function authMe()
     {
+        // Get the currently authenticated user
         $user = auth()->guard('api')->user();
 
-        if (!$user) {
-            return response()->json([
-                'status' => false,
-                'statusCode' => 401,
-                'message' => "Unauthenticated",
-                'data' => null,
-            ], 401);
-        }
-
-        return response()->json([
-            'status' => true,
-            'statusCode' => 200,
-            'message' => "You're authenticated",
-            'data' => $user,
-        ], 200);
-    }
-
-    public function Logout()
-    {
-        $removeToken = JWTAuth::invalidate(JWTAuth::getToken());
-
-        if ($removeToken) {
-            //return response JSON
+        // If the user is authenticated, return their details
+        if ($user) {
             return response()->json([
                 'status' => true,
                 'statusCode' => 200,
-                'message' => 'Logout success',
+                'message' => 'user authenticated',
+                'data' => [
+                    'user'    => $user
+                ]
+            ], 200);
+        }
+
+        // If no user is authenticated, return an error
+        return response()->json([
+            'status' => false,
+            'statusCode' => 401,
+            'message' => 'User not authenticated',
+            'data' => null,
+        ], 401);
+    }
+
+
+    public function Logout()
+    {
+        //remove token
+        $removeToken = JWTAuth::invalidate(JWTAuth::getToken());
+
+        if ($removeToken) {
+            return response()->json([
+                'status' => true,
+                'statusCode' => 200,
+                'message' => 'logout success',
                 'data' => null,
             ], 200);
         }

@@ -24,7 +24,7 @@ const AddBookPage = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/categories")
+      .get("http://localhost:8000/api/categories")
       .then((res) => {
         const categoryNames = res.data.data.map(
           (category: { name: string }) => category.name
@@ -76,7 +76,7 @@ const AddBookPage = () => {
     formData.append("cover", selectedImage[1]);
 
     axios
-      .post("http://localhost:3000/api/books", formData, {
+      .post("http://localhost:8000/api/books", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

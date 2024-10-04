@@ -38,7 +38,7 @@ export const SearchBooksProvider = ({
 
   const fetchBooks = async () => {
     setIsLoading(true);
-    const { data } = await axios.get<any>("http://localhost:3000/api/books", {
+    const { data } = await axios.get<any>("http://localhost:8000/api/books", {
       params: {
         q: queryParam.get("q"),
         perpage: 12,

@@ -4,8 +4,8 @@ export interface UserInterface {
   id: string;
   name: string;
   email: string;
-  role: "ADMIN" | "USER";
-  gender: "MALE" | "FEMALE";
+  role: "admin" | "user";
+  gender: "male" | "female";
   address?: string;
   phone?: string;
   borrowing: BorrowingInterface[] | null;
