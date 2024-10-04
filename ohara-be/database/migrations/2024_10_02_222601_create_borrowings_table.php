@@ -15,10 +15,12 @@ return new class extends Migration
             $table->string("id")->primary();
             $table->unsignedBigInteger("user_id");
             $table->string("book_id");
-            $table->timestamp("start_date");
-            $table->timestamp("end_date");
+            $table->timestamp("start_date")->userCurrent();
+            $table->timestamp("end_date")->nullable();
             $table->enum("status", ['awaiting confirmation', 'borrowed', 'lost', 'returned']);
             $table->timestamps();
+            $table->foreign("user_id")->references("id")->on("users")->onDelete("CASCADE")->onUpdate("NO ACTION");
+            $table->foreign("book_id")->references("id")->on("books")->onUpdate("CASCADE")->onDelete("NO ACTION");
         });
     }
 

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger("category_id");
             $table->string("book_id");
             $table->timestamps();
-            $table->foreign("category_id")->references("id")->on("categories");
-            $table->foreign("book_id")->references("id")->on("books");
+            $table->foreign("category_id")->references("id")->on("categories")->onUpdate("CASCADE")->onDelete("NO ACTION");
+            $table->foreign("book_id")->references("id")->on("books")->onUpdate("CASCADE")->onDelete("NO ACTION");
         });
     }
 
