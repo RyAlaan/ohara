@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,4 +25,13 @@ Route::prefix('/auth')->group(function () {
     Route::post('/login', [AuthController::class, 'Login']);
     Route::get('/authme', [AuthController::class, 'AuthMe']);
     Route::post('/logout', [AuthController::class, 'Logout']);
+});
+
+
+Route::prefix('/categories')->group(function () {
+    Route::post('/', [CategoryController::class, 'store']);
+    Route::get('/', [CategoryController::class, 'index']);
+    Route::get('/{id}', [CategoryController::class, 'show']);
+    Route::put('/{id}', [CategoryController::class, 'update']);
+    Route::delete('/{id}', [CategoryController::class, 'destroy']);
 });
