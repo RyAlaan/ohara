@@ -58,7 +58,7 @@ class UserController extends Controller
                 'status' => true,
                 'statusCode' => 200,
                 'message' => 'data retrieved successfully',
-                'page' => [
+                'pagination' => [
                     'perPage' => $users->perPage(),
                     'totalData' => $users->total(),
                     'currentPage' => $users->currentPage(),
