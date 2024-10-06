@@ -72,8 +72,8 @@ class User extends Authenticatable implements JWTSubject
      * 
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function DetailUser(): HasOne
+    public function userDetail(): HasOne
     {
-        return $this->hasOne(User::class);
+        return $this->hasOne(UserDetail::class);
     }
 }

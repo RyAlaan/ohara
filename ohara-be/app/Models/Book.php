@@ -28,7 +28,7 @@ class Book extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function Categories(): BelongsToMany
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'books_categories');
     }
@@ -38,7 +38,7 @@ class Book extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function Authors(): BelongsToMany
+    public function authors(): BelongsToMany
     {
         return $this->belongsToMany(Author::class, 'books_authors');
     }

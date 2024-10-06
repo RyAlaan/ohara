@@ -16,7 +16,7 @@ class AuthController extends Controller
      * @param Illuminate\Http\Request $request
      *  @return \Illuminate\Http\JsonResponse
      */
-    public function Register(Request $request)
+    public function register(Request $request)
     {
         //set validation
         $validator = Validator::make($request->all(), [
@@ -70,7 +70,7 @@ class AuthController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function Login(Request $request)
+    public function login(Request $request)
     {
         //set validation
         $validator = Validator::make($request->all(), [
@@ -145,7 +145,7 @@ class AuthController extends Controller
     }
 
 
-    public function Logout()
+    public function logout()
     {
         //remove token
         $removeToken = JWTAuth::invalidate(JWTAuth::getToken());
