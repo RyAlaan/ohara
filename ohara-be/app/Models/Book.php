@@ -10,8 +10,9 @@ class Book extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id';
+
     protected $fillable = [
-        'id',
         'ISBN',
         'name',
         'title',
@@ -41,5 +42,16 @@ class Book extends Model
     public function Authors(): BelongsToMany
     {
         return $this->belongsToMany(Author::class, 'books_authors');
+    }
+
+    public static function generateProductCode()
+    {
+        $bookCode = Self::max('id');
+        if (is_null($bookCode)) {
+            return "100001";
+        } else {
+            $newBookCode = (int)$bookCode + 1;
+            return (string)$newBookCode;
+        }
     }
 }
