@@ -65,10 +65,10 @@ Response Body :
     "statusCode": 200,
     "status": true,
     "message": "users data retrieved successfully",
-    "page" : {
-        "perPage" : "10",
-        "totalData" : "156",
-        "currentPage" : "1",
+    "pagination" : {
+        "perPage" : 10,
+        "totalData" : 156,
+        "currentPage" : 1,
         "nextPageUrl" : "/api/users?page=2",
         "prevPageUrl" : null,
     },

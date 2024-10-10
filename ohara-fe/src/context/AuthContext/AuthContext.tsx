@@ -126,6 +126,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleLogout = () => {
+    setIsLoading(true);
     const token = localStorage.getItem("token");
 
     axios
@@ -142,7 +143,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       )
       .then(() => {
         setUser(null);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   const clearMessage = () => {

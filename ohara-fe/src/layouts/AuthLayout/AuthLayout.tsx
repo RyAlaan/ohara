@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext/AuthContext";
+import { CircularProgress } from "@mui/material";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -33,12 +34,22 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
       </div>
       <div className="flex flex-col gap-y-10">{children}</div>
       <button
+        disabled={isLoading}
         className={clsx(
-          isLoading ? "bg-purple-700" : "bg-lightPrimary",
-          "w-full text-white rounded px-2 py-3 font-semibold uppercase hover:bg-purple-700 click:bg-lightPrimary transition-all duration-200"
+          "w-full flex flex-row gap-x-2 items-center justify-center text-white rounded px-2 py-3 font-semibold uppercase hover:bg-purple-700 click:bg-lightPrimary transition-all duration-200",
+          isLoading ? "bg-purple-700" : "bg-lightPrimary"
         )}
       >
-        {lastPath === "login" ? "Login" : "Sign Up"}
+        {isLoading ? (
+          <>
+            <p>Loading</p>
+            <CircularProgress size={20} color={"inherit"} />
+          </>
+        ) : lastPath === "login" ? (
+          "Login"
+        ) : (
+          "Sign Up"
+        )}
       </button>
       <div className="flex flex-row gap-x-2">
         {lastPath === "login" ? (

@@ -112,7 +112,7 @@ const SidebarLayout = () => {
         ) : (
           <SidebarBtn
             url={user ? "/auth/logout" : "/auth/login"}
-            onClick={handleLogout}
+            onClick={user ? handleLogout : undefined}
           >
             {user ? <Logout /> : <Login />}
             {user ? "Logout" : "Login"}
