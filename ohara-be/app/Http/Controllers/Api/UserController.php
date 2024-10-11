@@ -14,7 +14,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      * 
-     * @
+     * @param Illuminate\Http\Request
      */
     public function index(Request $request)
     {
@@ -83,10 +83,9 @@ class UserController extends Controller
             'name' => 'required|min:6|',
             'email' =>  'required|email|unique:users',
             'password' => 'required|min:6',
-            'role' => 'required',
-            'profile' =>
-            'nullable|images|mimes:jpg,jpeg,png|max:2048',
-            'phone' => 'required|unique:user_detail',
+            'role' => 'nullable',
+            'profile' => 'nullable|mimes:jpg,jpeg,png|max:2048',
+            'phone' => 'required|unique:user_details',
             'address' => 'required',
             'gender' => 'required',
         ]);
@@ -109,12 +108,12 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'role' => $request->role,
+            'role' => $request->role ? $request->role : 'user',
         ]);
 
         UserDetail::create([
             'user_id' => $user->id,
-            'profile' => $profile,
+            'profile' => '/public/users/' . $profile->hashName(),
             'gender' => $request->gender,
             'address' => $request->address,
             'phone' => $request->phone,
@@ -162,6 +161,10 @@ class UserController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, string $id)
     {
@@ -169,7 +172,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:6|',
             'role' => 'required',
-            'phone' => 'required|unique:user_detail',
+            'phone' => 'required|unique:user_details',
             'address' => 'required',
             'gender' => 'required'
         ]);
@@ -184,7 +187,7 @@ class UserController extends Controller
         }
 
         // search user
-        $user = User::where($id)->with('userDetail')->get();
+        $user = User::with('userDetail')->find($id);
 
         if (!$user) {
             return response()->json([
@@ -214,7 +217,7 @@ class UserController extends Controller
             // update book with new image
             $user->userDetail->update([
                 'gender' => $request->gender,
-                'profile' => $profile,
+                'profile' => '/public/users/' . $profile,
                 'phone' => $request->phone,
                 'address' => $request->address,
             ]);
@@ -242,7 +245,7 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         // get user by id
-        $user = User::where('id', $id)->load('userDetails')->get();
+        $user = User::where('id', $id);
 
         if (!$user) {
             return response()->json([

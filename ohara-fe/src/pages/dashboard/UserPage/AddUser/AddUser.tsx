@@ -9,20 +9,20 @@ const AddUserPage = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    axios.get("localhost:8000", {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => {
-      setUser(res.data);
-    });
+    axios
+      .get("localhost:8000", {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setUser(res.data);
+      });
   }, [user]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    
-  }
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {};
 
   return (
     <form
@@ -43,9 +43,9 @@ const AddUserPage = () => {
                 name="cover"
                 id="cover"
                 accept="image/png, image/jpg, image/jpeg"
-                onChange={handleSelectedImage}
+                // onChange={handleSelectedImage}
               />
-              {selectedImage ? (
+              {/* {selectedImage ? (
                 <img
                   src={selectedImage[0]}
                   alt="selected image"
@@ -53,7 +53,7 @@ const AddUserPage = () => {
                 />
               ) : (
                 <AddPhotoAlternateRoundedIcon sx={{ fontSize: 60 }} />
-              )}
+              )} */}
             </div>
             <p className="text-sm text-[#94A3B8]">
               Chose cover image. Only *.png, *.jpg and *.jpeg. Maximum file is

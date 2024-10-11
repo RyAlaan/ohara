@@ -49,9 +49,7 @@ class AuthController extends Controller
                 'status' => true,
                 'statusCode' => 201,
                 'message' => 'user registered successfully',
-                'data'    => [
-                    'user' => $user,
-                ],
+                'data'    =>  $user,
             ], 201);
         }
 

@@ -29,8 +29,8 @@ Route::prefix('/auth')->group(function () {
 
 Route::prefix('/users')->group(function () {
     Route::post('/', [UserController::class, 'store'])->middleware('auth.admin');
-    Route::get('/', [UserController::class, 'index']);
-    Route::get('/{id}', [UserController::class, 'show'])->middleware('auth.admin');
+    Route::get('/', [UserController::class, 'index'])->middleware('auth.admin');
+    Route::get('/{id}', [UserController::class, 'show']);
     Route::put('/{id}', [UserController::class, 'update']);
-    Route::delete('/{id}', [UserController::class, 'delete'])->middleware('auth.admin');
+    Route::delete('/{id}', [UserController::class, 'destroy'])->middleware('auth.admin');
 });
