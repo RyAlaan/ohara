@@ -45,6 +45,7 @@ const AddBookPage = () => {
     setSelectedCategories(typeof value === "string" ? value.split(",") : value);
   };
 
+
   const handleSelectedImage = (e: any) => {
     const file = e.target.files[0];
 
