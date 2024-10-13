@@ -101,7 +101,7 @@ class UserController extends Controller
 
         // upload profile
         $profile = $request->file('profile');
-        $profile->storeAs('public/users/', $profile->hashName());
+        $profile->storeAs('profile/users/', $profile->hashName());
 
         // create data
         $user = User::create([
@@ -111,12 +111,15 @@ class UserController extends Controller
             'role' => $request->role ? $request->role : 'user',
         ]);
 
+        $phone =
+            substr($request->phone, 0, 4) . '-' . substr($request->phone, 4, 4) . '-' . substr($request->phone, 8);
+
         UserDetail::create([
             'user_id' => $user->id,
-            'profile' => '/public/users/' . $profile->hashName(),
+            'profile' => '/storage/users/' . $profile->hashName(),
             'gender' => $request->gender,
             'address' => $request->address,
-            'phone' => $request->phone,
+            'phone' => $phone,
         ]);
 
         $user->load('userDetail');
@@ -204,6 +207,10 @@ class UserController extends Controller
             'role' => $request->role,
         ]);
 
+        // formatting phone number
+        $phone =
+            substr($request->phone, 0, 4) . '-' . substr($request->phone, 4, 4) . '-' . substr($request->phone, 8);
+
         // update user detail
         if ($request->hasFile('profile')) {
 
@@ -217,15 +224,15 @@ class UserController extends Controller
             // update book with new image
             $user->userDetail->update([
                 'gender' => $request->gender,
-                'profile' => '/public/users/' . $profile,
-                'phone' => $request->phone,
+                'profile' => '/storage/users/' . $profile,
+                'phone' => $phone,
                 'address' => $request->address,
             ]);
         } else {
             // update book without image
             $user->userDetail->update([
                 'gender' => $request->gender,
-                'phone' => $request->phone,
+                'phone' => $phone,
                 'address' => $request->address,
             ]);
         }

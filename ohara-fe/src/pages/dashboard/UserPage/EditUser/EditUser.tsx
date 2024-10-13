@@ -11,8 +11,11 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import clsx from "clsx";
+import { UserInterface } from "../../../../interfaces/UserInterface";
+import { useParams } from "react-router-dom";
 
 const EditUserPage = () => {
+  const [user, setUser] = useState<UserInterface | null>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -20,6 +23,33 @@ const EditUserPage = () => {
     role: "",
     gender: "",
   });
+  const { id } = useParams();
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    axios
+      .get(`http://localhost:8000/api/users/${id}`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        setInputSelectVal((prevState: any) => ({
+          ...prevState,
+          role: res.data.data.role,
+          gender: res.data.data.user_detail.gender,
+        }))
+        setSelectedImage({ preview: "http://localhost:8000" + res.data.data.user_detail.profile, file: null });
+        setUser(res.data.data);
+      })
+      .catch((res) => {
+        console.error(res.data.message);
+        setMessage(res.data.message);
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const handleSelectedImage = (e: any) => {
     const file = e.target.files[0];
@@ -43,16 +73,14 @@ const EditUserPage = () => {
     const formData = new FormData();
 
     formData.append("name", e.currentTarget.name.value);
-    formData.append("email", e.currentTarget.email.value);
-    formData.append("password", e.currentTarget.password.value);
     formData.append("role", inputSelectVal.role);
     formData.append("gender", inputSelectVal.gender);
     formData.append("phone", e.currentTarget.phone.value);
     formData.append("address", e.currentTarget.address.value);
-    selectedImage && formData.append("profile", selectedImage.file);
+    selectedImage.file && formData.append("profile", selectedImage.file);
 
     axios
-      .post("http://localhost:8000/api/users", formData, {
+      .put(`http://localhost:8000/api/users/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Accept: "application/json",
@@ -61,14 +89,11 @@ const EditUserPage = () => {
       })
       .then((res) => {
         if (res.status === 201) {
-          console.log(res.data.message);
           window.location.href = "/dashboard/users";
         }
       })
       .catch((err) => {
         if (err.response.data.statusCode === 422) {
-          console.log(formData);
-          // setMessage(err.response.data.message);
           console.log(err.response.data.message);
         } else {
           setMessage(err.response.data.message);
@@ -165,25 +190,28 @@ const EditUserPage = () => {
         </div>
       </div>
       <div className="h-fit w-full flex flex-col items-end gap-y-5">
-        <div className="px-8 py-5 flex flex-col gap-y-5 rounded-lg bg-white">
+        <div className="w-full px-8 py-5 flex flex-col gap-y-5 rounded-lg bg-white">
           <div className="inputBox w-full flex flex-col">
-            <InputComponent name="name" type="text" className="rounded-lg" />
-          </div>
-          <div className="flex flex-row gap-x-4">
-            <InputComponent name="email" type="email" className="rounded-lg" />
             <InputComponent
-              name="password"
-              type="password"
+              name="name"
+              type="text"
+              value={user?.name}
               className="rounded-lg"
             />
           </div>
-          <InputComponent name="phone" type="tel" className="rounded-lg" />
+          <InputComponent
+            value={user?.user_detail?.phone?.replace(/-/g, "")}
+            name="phone"
+            type="tel"
+            className="rounded-lg"
+          />
           <textarea
             name="address"
             id=""
             rows={4}
             className="peer border-2  px-2 py-3 w-full rounded-lg"
-            placeholder="Address"
+            placeholder="address"
+            defaultValue={user?.user_detail?.address}
           ></textarea>
         </div>
         <div className="flex flex-row gap-x-3">

@@ -72,9 +72,8 @@ const DashboardUserPage = () => {
         <div className="font-sans flex flex-col gap-2 rounded-t overflow-hidden">
           <div className="thead">
             <div className="tr min-w-full px-2 py-3 flex flex-row justify-between gap-x-3 bg-slate-100">
-              <div className="th min-w-12 text-end">id</div>
-              <div className="th min-w-40">name</div>
-              <div className="th min-w-40">email</div>
+              <div className="th min-w-12 text-end">No</div>
+              <div className="th min-w-64">user</div>
               <div className="th min-w-20 text-end">role</div>
               <div className="th min-w-20 text-end">gender</div>
               <div className="th min-w-32 text-end">phone</div>
@@ -88,9 +87,14 @@ const DashboardUserPage = () => {
                   key={id}
                   className="tr min-w-full px-2 py-3 flex flex-row justify-between items-center gap-x-3 border-b border-slate-300"
                 >
-                  <div className="th min-w-12 text-end">{user.id}</div>
-                  <div className="th min-w-40">{user.name}</div>
-                  <div className="th min-w-40">{user.email}</div>
+                  <div className="th min-w-12 text-end">{id + 1}</div>
+                  <div className="th min-w-64 flex flex-row items-center gap-3">
+                    <div className="w-10 h-10 bg-slate-400 rounded-full"></div>
+                    <div className="">
+                      <p className="font-semibold">{user.name}</p>
+                      <p className="text-sm">{user.email}</p>
+                    </div>
+                  </div>
                   <div className="th min-w-20 text-end">{user.role}</div>
                   <div className="th min-w-20 text-end">
                     {user.user_detail?.gender}
