@@ -134,7 +134,7 @@ class UserController extends Controller
             'status' => true,
             'statusCode' => 201,
             'message' => 'data created successfully',
-            'data' => ['user' => $user],
+            'data' => $user,
         ], 201);
     }
 
@@ -147,7 +147,7 @@ class UserController extends Controller
     public function show($id)
     {
         // get data
-        $user = User::where('id', $id)->with('userDetail')->get();
+        $user = User::where('id', $id)->with('userDetail')->first();
 
         if (!$user) {
             return response()->json([
@@ -163,7 +163,7 @@ class UserController extends Controller
             'status' => true,
             'statusCode' => 200,
             'message' => 'data user retrieved successfully',
-            'data' => $user[0],
+            'data' => $user,
         ], 200);
     }
 

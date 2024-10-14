@@ -120,9 +120,6 @@ class AuthController extends Controller
     {
         // Get the currently authenticated user
         $curr = auth()->guard('api')->user();
-
-        // dd($curr->id); 1
-
         
         // If the user is authenticated, return their details
         if ($curr) {
