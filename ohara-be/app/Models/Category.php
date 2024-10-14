@@ -19,7 +19,7 @@ class Category extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function Books(): BelongsToMany
+    public function books(): BelongsToMany
     {
         return $this->belongsToMany(Book::class, 'books_categories');
     }

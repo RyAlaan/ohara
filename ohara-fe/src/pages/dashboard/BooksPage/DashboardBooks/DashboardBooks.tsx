@@ -6,7 +6,7 @@ import {
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
-const DashboardBooksPage = () => {
+const DashboardBookPage = () => {
   return (
     <div className="min-h-screen w-full p-6">
       <div className="min-h-screen min-w-[586px] w-full px-5 pt-3 pb-5 flex flex-col gap-y-6 rounded xl:rounded-lg bg-white">
@@ -76,4 +76,4 @@ const DashboardBooksPage = () => {
   );
 };
 
-export default DashboardBooksPage;
+export default DashboardBookPage;

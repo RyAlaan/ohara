@@ -43,8 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       })
       .then((res) => {
-        setUser(res.data.data.user);
-        console.log();
+        setUser(res.data.data);
       })
       .catch(() => {})
       .finally(() => {
@@ -80,10 +79,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         window.location.href = "/";
       })
       .catch((error) => {
-        console.error(error);
-        if (error.response) {
-          setMessage(error.response.data.message);
-        } else if (error.request) {
+        if (error.res) {
+          setMessage(error.res.data.message);
+        } else if (error.res.data.message === 500) {
           setMessage("No response from server");
         } else {
           setMessage(error.message);
@@ -126,6 +124,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleLogout = () => {
+    setIsLoading(true);
     const token = localStorage.getItem("token");
 
     axios
@@ -142,7 +141,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       )
       .then(() => {
         setUser(null);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   const clearMessage = () => {

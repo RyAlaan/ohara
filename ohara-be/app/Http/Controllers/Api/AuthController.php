@@ -16,13 +16,13 @@ class AuthController extends Controller
      * @param Illuminate\Http\Request $request
      *  @return \Illuminate\Http\JsonResponse
      */
-    public function Register(Request $request)
+    public function register(Request $request)
     {
         //set validation
         $validator = Validator::make($request->all(), [
             'name'      => 'required',
             'email'     => 'required|email|unique:users',
-            'password'  => 'required|min:8|confirmed'
+            'password'  => 'required|min:6|confirmed'
         ]);
 
         //if validation fails
@@ -30,7 +30,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'statusCode' => 422,
-                'message' => $validator->errors(),
+                'message' => [$validator->errors()],
                 'data' => null,
             ], 422);
         }
@@ -49,9 +49,7 @@ class AuthController extends Controller
                 'status' => true,
                 'statusCode' => 201,
                 'message' => 'user registered successfully',
-                'data'    => [
-                    'user' => $user,
-                ],
+                'data'    =>  $user,
             ], 201);
         }
 
@@ -70,7 +68,7 @@ class AuthController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function Login(Request $request)
+    public function login(Request $request)
     {
         //set validation
         $validator = Validator::make($request->all(), [
@@ -83,7 +81,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'statusCode' => 422,
-                'message' => $validator->errors(),
+                'message' => [$validator->errors()],
                 'data' => null,
             ], 422);
         }
@@ -121,17 +119,20 @@ class AuthController extends Controller
     public function authMe()
     {
         // Get the currently authenticated user
-        $user = auth()->guard('api')->user();
+        $curr = auth()->guard('api')->user();
 
+        // dd($curr->id); 1
+
+        
         // If the user is authenticated, return their details
-        if ($user) {
+        if ($curr) {
+            $user = User::where('id', $curr->id)->with('userDetail')->first();
+            
             return response()->json([
                 'status' => true,
                 'statusCode' => 200,
                 'message' => 'user authenticated',
-                'data' => [
-                    'user'    => $user
-                ]
+                'data' => $user
             ], 200);
         }
 
@@ -145,7 +146,7 @@ class AuthController extends Controller
     }
 
 
-    public function Logout()
+    public function logout()
     {
         //remove token
         $removeToken = JWTAuth::invalidate(JWTAuth::getToken());

@@ -18,6 +18,7 @@ class UserDetail extends Model
     protected $fillable = [
         "user_id",
         "gender",
+        "profile",
         "phone",
         'address',
     ];
@@ -27,7 +28,7 @@ class UserDetail extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function User(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

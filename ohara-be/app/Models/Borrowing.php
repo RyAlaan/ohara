@@ -23,7 +23,7 @@ class Borrowing extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function User(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -33,7 +33,7 @@ class Borrowing extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function Book(): BelongsTo
+    public function book(): BelongsTo
     {
         return $this->belongsTo(Book::class);
     }
