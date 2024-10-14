@@ -28,7 +28,10 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/dashboard/users/" element={<DashboardUserPage />} />
             <Route path="/dashboard/users/add" element={<AddUserPage />} />
-            <Route path="/dashboard/users/edit/:id" element={<EditUserPage/>} />
+            <Route
+              path="/dashboard/users/edit/:id"
+              element={<EditUserPage />}
+            />
             <Route path="/dashboard/books" element={<DashboardBooksPage />} />
             <Route path="/dashboard/books/add" element={<AddBookPage />} />
           </Route>

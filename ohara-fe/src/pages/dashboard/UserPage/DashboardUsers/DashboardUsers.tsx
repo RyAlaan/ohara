@@ -4,23 +4,75 @@ import {
   DeleteOutlineOutlined,
   EditNoteOutlined,
 } from "@mui/icons-material";
-import TableLayout from "../../../../layouts/TableLayout/TableLayout";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { UserInterface } from "../../../../interfaces/UserInterface";
 import { PaginationInterface } from "../../../../interfaces/PaginationInterface";
-import { CircularProgress, Pagination } from "@mui/material";
+import {
+  Alert,
+  Avatar,
+  Box,
+  CircularProgress,
+  Modal,
+  Pagination,
+  Typography,
+} from "@mui/material";
+import clsx from "clsx";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 const DashboardUserPage = () => {
   const [users, setUsers] = useState<UserInterface[] | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [queryParam, _] = useSearchParams();
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState<{
+    message: string | null;
+    status: "success" | "error" | null;
+  }>({ message: null, status: "success" });
   const [pagination, setPagination] = useState<PaginationInterface | null>(
     null
   );
 
+  const deleteUser = (id: number) => {
+    axios
+      .delete(`http://localhost:8000/api/users/${id}`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        window.location.reload();
+        setMessage({ message: res.data.message, status: "success" });
+      })
+      .catch((err) => {
+        setMessage({ message: err.res.data.message, status: "error" });
+      });
+  };
+
   useEffect(() => {
-    setIsLoading(true);
+    console.log(message.message);
+
+    setTimeout(() => {
+      message &&
+        setMessage({
+          message: null,
+          status: null,
+        });
+    }, 8000);
+  }, []);
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
 
     axios
@@ -37,15 +89,27 @@ const DashboardUserPage = () => {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        setMessage({ message: res.data.message, status: "success" });
         setPagination(res.data.pagination);
         setUsers(res.data.data);
       })
-      .finally(() => setIsLoading(false));
+      .catch((err) => {
+        setMessage({ message: err.res.data.message, status: "error" });
+      });
   }, []);
 
   return (
     <div className="min-h-screen w-full p-6">
+      <Alert
+        className={clsx(
+          { "translate-y-48": message.message },
+          "right-1/2 translate-x-1/2 absolute -top-20  max-w-96 w-full text-justify transition-all duration-500 ease-linear z-[9999]"
+        )}
+        variant="filled"
+        severity={message.status ? message.status : "info"}
+      >
+        {message.message}
+      </Alert>
       <div className="min-h-screen min-w-[586px] w-full px-5 pt-3 pb-5 flex flex-col gap-y-6 rounded xl:rounded-lg bg-white">
         <div className="w-full flex flex-row justify-between">
           <h4 className="font-semibold text-xl">All Users</h4>
@@ -89,7 +153,9 @@ const DashboardUserPage = () => {
                 >
                   <div className="th min-w-12 text-end">{id + 1}</div>
                   <div className="th min-w-64 flex flex-row items-center gap-3">
-                    <div className="w-10 h-10 bg-slate-400 rounded-full"></div>
+                    <Avatar
+                      src={"http://localhost:8000" + user.user_detail?.profile}
+                    />
                     <div className="">
                       <p className="font-semibold">{user.name}</p>
                       <p className="text-sm">{user.email}</p>
@@ -104,7 +170,10 @@ const DashboardUserPage = () => {
                   </div>
                   <div className="th min-w-40 flex flex-row items-center justify-center gap-x-2">
                     <div className="p-1 rounded bg-red-100 cursor-pointer">
-                      <DeleteOutlineOutlined className="text-red-600" />
+                      <DeleteOutlineOutlined
+                        className="text-red-600"
+                        onClick={() => deleteUser(user.id)}
+                      />
                     </div>
                     <Link
                       to={`/dashboard/users/edit/${user.id}`}

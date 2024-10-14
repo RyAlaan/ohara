@@ -100,8 +100,10 @@ class UserController extends Controller
         }
 
         // upload profile
-        $profile = $request->file('profile');
-        $profile->storeAs('profile/users/', $profile->hashName());
+        if ($request->file('profile')) {
+            $profile = $request->file('profile');
+            $profile->storeAs('profile/users/', $profile->hashName());
+        }
 
         // create data
         $user = User::create([
@@ -116,7 +118,10 @@ class UserController extends Controller
 
         UserDetail::create([
             'user_id' => $user->id,
-            'profile' => '/storage/users/' . $profile->hashName(),
+            'profile' =>
+            $request->file('profile')  ?
+                '/storage/users/' . $profile->hashName()
+                : "",
             'gender' => $request->gender,
             'address' => $request->address,
             'phone' => $phone,

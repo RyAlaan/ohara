@@ -16,6 +16,7 @@ export interface UserDetailInterface {
   id: number;
   user_id: number;
   gender: "male" | "female";
+  profile: string | null;
   address: string;
   phone: string;
   created_at: string;

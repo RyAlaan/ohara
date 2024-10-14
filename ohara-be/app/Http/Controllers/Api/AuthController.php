@@ -119,17 +119,20 @@ class AuthController extends Controller
     public function authMe()
     {
         // Get the currently authenticated user
-        $user = auth()->guard('api')->user();
+        $curr = auth()->guard('api')->user();
 
+        // dd($curr->id); 1
+
+        
         // If the user is authenticated, return their details
-        if ($user) {
+        if ($curr) {
+            $user = User::where('id', $curr->id)->with('userDetail')->first();
+            
             return response()->json([
                 'status' => true,
                 'statusCode' => 200,
                 'message' => 'user authenticated',
-                'data' => [
-                    'user'    => $user
-                ]
+                'data' => $user
             ], 200);
         }
 
