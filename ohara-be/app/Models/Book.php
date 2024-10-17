@@ -10,10 +10,13 @@ class Book extends Model
 {
     use HasFactory;
 
+    protected $table = 'books';
+    public $incrementing = false; // Nonaktifkan auto increment
+    protected $keyType = 'string';
+
     protected $fillable = [
         'id',
         'ISBN',
-        'name',
         'title',
         'synopsis',
         'publisher',
@@ -22,23 +25,50 @@ class Book extends Model
         'stock',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            // Format ID: ddmmyy0001
+            $datePrefix = now()->format('dmy');
+            $latestBook = self::where('id', 'like', "$datePrefix%")->latest('id')->first();
+
+            if ($latestBook) {
+                // Ambil ID terakhir dan tambahkan 1
+                $lastNumber = substr($latestBook->id, -4);
+                $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+            } else {
+                $newNumber = '0001';
+            }
+
+            // Set ID baru
+            $model->id = $datePrefix . $newNumber;
+        });
+    }
+
+    public function getCoverAttribute($value)
+    {
+        return $value ? url('storage/books/' . $value) : null;
+    }
 
     /**
      * The categories that the book belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function Categories(): BelongsToMany
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'books_categories');
     }
+
 
     /**
      * Get the authors that the book belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function Authors(): BelongsToMany
+    public function authors(): BelongsToMany
     {
         return $this->belongsToMany(Author::class, 'books_authors');
     }

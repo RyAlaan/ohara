@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Author;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -61,7 +62,7 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        // validation
+        // Validation
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'ISBN' => 'required|unique:books',
@@ -70,9 +71,9 @@ class BookController extends Controller
             'price' => 'required|numeric|min:1000',
             'publisher' => 'required',
             'synopsis' => 'required',
-            'cover' => 'required|images|mimes:jpg,jpeg,png|max:2048',
-            'authors.name' => 'required',
-            'categories.id' => 'required'
+            'cover' => 'required|mimes:jpg,jpeg,png|max:2048',
+            'authors' => 'required',
+            'categories' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -84,16 +85,22 @@ class BookController extends Controller
             ], 422);
         }
 
-        // upload image
-        $cover = $request->file('cover');
-        $cover->storeAs('public/books', $cover->hashName());
+        // Upload image (if provided)
+        $coverName = null;
+        if ($request->hasFile('cover')) {
+            $cover = $request->file('cover');
+            $coverName = $cover->hashName();
+            $cover->storeAs('public/books', $coverName);
+        }
 
-        // create book id
-        $id = Book::generateProductCode();
+        // define category
+        $categories = explode(', ', $request->categories);
 
-        // create data
+        // define authors
+        $authors = explode(', ', $request->authors);
+
+        // create book data
         $book = Book::create([
-            'id' => $id,
             'title' => $request->title,
             'ISBN' => $request->ISBN,
             'releaseDate' => $request->releaseDate,
@@ -101,17 +108,34 @@ class BookController extends Controller
             'price' => $request->price,
             'publisher' => $request->publisher,
             'synopsis' => $request->synopsis,
-            'cover' => $cover->hashName(),
+            'cover' => $coverName,
         ]);
 
-        // return
+        // connect book to categories with attach method
+        $book->categories()->attach($categories);
+
+        // connect book to authors
+        foreach ($authors as $author) {
+            $author = Author::firstOrCreate(['name' => $author]);
+
+            $book->authors()->attach($author->id);
+        }
+
+        // load author and categories
+        $book->load('categories', 'authors');
+
+        $book->categories->makeHidden('pivot');
+        $book->authors->makeHidden('pivot');
+
+        // Return response
         return response()->json([
             'status' => true,
             'statusCode' => 201,
-            'message' => 'book data created successfully',
+            'message' => 'Book data created successfully',
             'data' => $book
         ], 201);
     }
+
 
     /**
      * Display the specified resource.

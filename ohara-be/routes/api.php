@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,4 +25,12 @@ Route::prefix('/auth')->group(function () {
     Route::post('/login', [AuthController::class, 'Login']);
     Route::get('/authme', [AuthController::class, 'AuthMe']);
     Route::post('/logout', [AuthController::class, 'Logout']);
+});
+
+Route::prefix('/books')->group(function () {
+    Route::post('/', [BookController::class, 'store']);
+    Route::get('/', [BookController::class, 'index']);
+    Route::get('/{id}', [BookController::class, 'show']);
+    Route::put('/{id}', [BookController::class, 'update']);
+    Route::delete('/{id}', [BookController::class, 'destroy']);
 });

@@ -12,13 +12,16 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { AddRounded } from "@mui/icons-material";
 
-const AddBookPage = () => {
+const EditBookPage = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<any>(null);
+  const { id } = useParams();
+
+  const d = new Date();
 
   useEffect(() => {
     axios
@@ -58,23 +61,15 @@ const AddBookPage = () => {
     const formData = new FormData();
     formData.append("title", e.currentTarget.title.value);
     formData.append("ISBN", e.currentTarget.ISBN.value);
-    formData.append("releasedYear", e.currentTarget.releasedYear.value);
+    formData.append("releasedDate", e.currentTarget.releasedDate.value);
     formData.append("publisher", e.currentTarget.publisher.value);
     formData.append("stock", e.currentTarget.stock.value);
     formData.append("price", e.currentTarget.price.value);
     formData.append("synopsis", e.currentTarget.synopsis.value);
-    e.currentTarget.author.value
-      .split(", ")
-      .forEach((author: string, index: number) => {
-        formData.append("author-" + index, author);
-      });
-    selectedCategories.forEach((category, index) => {
-      formData.append("category-" + index, category);
-    });
     formData.append("cover", selectedImage[1]);
-
+    
     axios
-      .post("http://localhost:8000/api/books", formData, {
+      .post(`http://localhost:8000/api/books/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -189,11 +184,12 @@ const AddBookPage = () => {
             </div>
             <div className="w-full flex flex-row gap-x-4">
               <InputComponent
-                label="Released Date"
+                label="Released Year"
                 name="releasedDate"
-                type="date"
+                type="number"
                 max="2099"
-                className="rounded-lg w-full"
+                value={d.getFullYear()}
+                className="rounded-lg"
               />
               <InputComponent
                 name="publisher"
@@ -242,4 +238,4 @@ const AddBookPage = () => {
   );
 };
 
-export default AddBookPage;
+export default EditBookPage;

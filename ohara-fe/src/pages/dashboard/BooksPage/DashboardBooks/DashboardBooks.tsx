@@ -3,7 +3,9 @@ import {
   DeleteOutlineOutlined,
   EditNoteOutlined,
   KeyboardArrowDownRounded,
+  RemoveRedEyeOutlined,
 } from "@mui/icons-material";
+import { Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const DashboardBooksPage = () => {
@@ -36,35 +38,44 @@ const DashboardBooksPage = () => {
           <table className="w-full">
             <thead className="border-b border-dashed">
               <tr>
-                <th className="min-w-24 py-3 text-start text-sm font-semibold">
-                  Code
+                <th className="y-3 text-start text-sm font-semibold">Code</th>
+                <th className="py-3 text-start text-sm font-semibold">Book</th>
+                <th className="py-3 text-center text-sm font-semibold">
+                  Stock
                 </th>
-                <th className="min-w-28  py-3 text-start text-sm font-semibold">
-                  Manga
-                </th>
-                <th className="min-w-16  py-3 text-end text-sm font-semibold">
-                  Total Volume
-                </th>
-                <th className="min-w-32  py-3 text-end text-sm font-semibold">
-                  Author
-                </th>
-                <th className="min-w-20  py-3 text-end text-sm font-semibold">
-                  Action
-                </th>
+                <th className="py-3 text-end text-sm font-semibold">Author</th>
+                <th className="py-3 text-end text-sm font-semibold">Action</th>
               </tr>
             </thead>
             <tbody>
               <tr className="border-b border-dashed">
-                <td className=" py-3 text-sm">#00001</td>
-                <td className=" py-3 text-sm">Vinland Saga</td>
-                <td className=" py-3 text-sm text-end">14</td>
-                <td className=" py-3 text-sm text-end">Eichiro Oda</td>
-                <td className=" py-3 flex flex-row justify-end gap-x-1 text-sm text-end">
-                  <div className="p-1 rounded bg-red-100">
-                    <DeleteOutlineOutlined className="text-red-600" />
+                <td className="py-3 text-sm align-center"># 1510240001</td>
+                <td className="py-3 text-sm flex flex-row items-center gap-x-2">
+                  <img src="https://placehold.co/40x60" alt="" className="" />
+                  <div className="flex flex-col">
+                    <p className="font-semibold">Vinland Saga</p>
+                    <p>7976374626</p>
                   </div>
-                  <div className="p-1 rounded bg-yellow-100">
-                    <EditNoteOutlined className="text-yellow-600" />
+                </td>
+                <td className="py-3 text-sm">
+                  <div className="flex flex-row items-center justify-center">
+                    <div className="w-16 h-6 flex justify-center items-center bg-green-100 text-green-600 font-medium rounded">
+                      <p>14</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="py-3 text-sm text-end font-semibold">Eichiro Oda</td>
+                <td className="py-3 text-sm text-end">
+                  <div className="flex flex-row justify-end items-end gap-x-1">
+                    <div className="p-1 rounded bg-blue-100">
+                      <RemoveRedEyeOutlined className="text-blue-600" />
+                    </div>
+                    <div className="p-1 rounded bg-yellow-100">
+                      <EditNoteOutlined className="text-yellow-600" />
+                    </div>
+                    <div className="p-1 rounded bg-red-100">
+                      <DeleteOutlineOutlined className="text-red-600" />
+                    </div>
                   </div>
                 </td>
               </tr>
