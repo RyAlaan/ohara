@@ -14,25 +14,41 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { AddRounded } from "@mui/icons-material";
+import { CategoryInterface } from "../../../../interfaces/CategoryInterface";
+
+const d = new Date();
 
 const AddBookPage = () => {
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<CategoryInterface[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<any>(null);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
     axios
-      .get("http://localhost:8000/api/categories")
+      .get("http://localhost:8000/api/categories", {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((res) => {
-        const categoryNames = res.data.data.map(
-          (category: { name: string }) => category.name
-        );
-        setCategories(categoryNames);
+        // const categoryNames = res.data.data.map(
+        //   (category: { name: string }) => category.name
+        // );
+        console.log("testtt");
+        console.log(res.data.data);
       })
       .catch((err) => {
         console.error(err.message);
       });
   }, []);
+
+  useEffect(() => {
+    console.log(categories);
+  }, [categories]);
 
   const handleCategoriesChange = (
     event: SelectChangeEvent<typeof selectedCategories>
@@ -129,7 +145,7 @@ const AddBookPage = () => {
         </label>
         <div className="px-8 py-5 flex flex-col gap-y-4 bg-white rounded-lg">
           <h1 className="text-2xl font-semibold text-black">Categories</h1>
-          <FormControl className="w-full rounded-lg">
+          {/* <FormControl className="w-full rounded-lg">
             <InputLabel id="categories-checkbox">Categories</InputLabel>
             <Select
               labelId="categories-checkbox"
@@ -154,7 +170,7 @@ const AddBookPage = () => {
                 </MenuItem>
               ))}
             </Select>
-          </FormControl>
+          </FormControl> */}
           <Link
             to={"/dashboard/categories/add"}
             className="w-full p-4 flex flex-row items-center gap-x-2 text-purple-700 rounded-lg bg-purple-100 hover:bg-purple-700 hover:text-white transition-colors duration-500"
@@ -192,8 +208,7 @@ const AddBookPage = () => {
                 label="Released Date"
                 name="releasedDate"
                 type="date"
-                max="2099"
-                className="rounded-lg w-full"
+                className="rounded-lg"
               />
               <InputComponent
                 name="publisher"

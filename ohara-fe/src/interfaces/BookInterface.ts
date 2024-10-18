@@ -12,7 +12,7 @@ export interface BookInterface {
   stock: number;
   price: number;
   releaseDate: string;
-  author?: AuthorInterface[];
+  authors?: AuthorInterface[];
   categories?: CategoryInterface[];
   borrowing?: BorrowingInterface[];
   CreatedAt: string;

@@ -33,7 +33,7 @@ const InputComponent = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <input
         type={type === "password" ? (isOpen ? "text" : "password") : type}
         name={name}
@@ -44,14 +44,14 @@ const InputComponent = ({
         defaultValue={value}
         className={clsx(
           className,
-          hasValue ? "border-violet-700" : "border-slate-300",
+          hasValue || type == "date" ? "border-violet-700" : "border-slate-300",
           "peer border-2 rounded px-2 py-3 w-full"
         )}
         onChange={handleInputChange}
       />
       <label
         className={clsx(
-          hasValue || value
+          hasValue || value ||type == "date"
             ? "text-violet-700 -translate-y-4 text-sm border-violet-700"
             : "text-black border-white",
           "absolute top-2 left-4 px-2 bg-white border-x-2 transition-all duration-300"

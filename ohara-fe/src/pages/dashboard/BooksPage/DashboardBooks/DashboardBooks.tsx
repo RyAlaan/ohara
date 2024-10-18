@@ -7,8 +7,12 @@ import {
 } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useSearchBooks } from "../../../../context/SearchBooksContext/SearchBooksContext";
+import { BookInterface } from "../../../../interfaces/BookInterface";
 
 const DashboardBooksPage = () => {
+  const { books } = useSearchBooks();
+
   return (
     <div className="min-h-screen w-full p-6">
       <div className="min-h-screen min-w-[586px] w-full px-5 pt-3 pb-5 flex flex-col gap-y-6 rounded xl:rounded-lg bg-white">
@@ -48,37 +52,41 @@ const DashboardBooksPage = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-dashed">
-                <td className="py-3 text-sm align-center"># 1510240001</td>
-                <td className="py-3 text-sm flex flex-row items-center gap-x-2">
-                  <img src="https://placehold.co/40x60" alt="" className="" />
-                  <div className="flex flex-col">
-                    <p className="font-semibold">Vinland Saga</p>
-                    <p>7976374626</p>
-                  </div>
-                </td>
-                <td className="py-3 text-sm">
-                  <div className="flex flex-row items-center justify-center">
-                    <div className="w-16 h-6 flex justify-center items-center bg-green-100 text-green-600 font-medium rounded">
-                      <p>14</p>
+              {books?.map((book: BookInterface) => (
+                <tr key={book.id} className="border-b border-dashed">
+                  <td className="py-3 text-sm align-center"># {book.id}</td>
+                  <td className="py-3 text-sm flex flex-row items-center gap-x-2">
+                    <img src={book.cover} alt="" className="w-[30px] h-[50px]" />
+                    <div className="flex flex-col">
+                      <p className="font-semibold">{book.title}</p>
+                      <p>{book.ISBN}</p>
                     </div>
-                  </div>
-                </td>
-                <td className="py-3 text-sm text-end font-semibold">Eichiro Oda</td>
-                <td className="py-3 text-sm text-end">
-                  <div className="flex flex-row justify-end items-end gap-x-1">
-                    <div className="p-1 rounded bg-blue-100">
-                      <RemoveRedEyeOutlined className="text-blue-600" />
+                  </td>
+                  <td className="py-3 text-sm">
+                    <div className="flex flex-row items-center justify-center">
+                      <div className="w-16 h-6 flex justify-center items-center bg-green-100 text-green-600 font-medium rounded">
+                        <p>{book.stock}</p>
+                      </div>
                     </div>
-                    <div className="p-1 rounded bg-yellow-100">
-                      <EditNoteOutlined className="text-yellow-600" />
+                  </td>
+                  <td className="py-3 text-sm text-end font-semibold">
+                    Nama guwa
+                  </td>
+                  <td className="py-3 text-sm text-end">
+                    <div className="flex flex-row justify-end items-end gap-x-1">
+                      <div className="p-1 rounded bg-blue-100">
+                        <RemoveRedEyeOutlined className="text-blue-600" />
+                      </div>
+                      <div className="p-1 rounded bg-yellow-100">
+                        <EditNoteOutlined className="text-yellow-600" />
+                      </div>
+                      <div className="p-1 rounded bg-red-100">
+                        <DeleteOutlineOutlined className="text-red-600" />
+                      </div>
                     </div>
-                    <div className="p-1 rounded bg-red-100">
-                      <DeleteOutlineOutlined className="text-red-600" />
-                    </div>
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

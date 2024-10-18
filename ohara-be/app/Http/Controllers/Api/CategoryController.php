@@ -17,15 +17,15 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         //  query data
-        $categories = Category::query();
+        $query = Category::query();
 
         // search by name
         if ($request->has('name')) {
             $name = $request->input('name');
-            $categories->where('name', $name);
+            $query = $query->where('name', $name);
         }
 
-        $categories->with('books')->with('authors');
+        $categories = $query->with('books')->get();
 
         // return
         return response()->json([

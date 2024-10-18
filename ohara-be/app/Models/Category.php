@@ -15,9 +15,12 @@ class Category extends Model
     ];
 
     /**
-     * The books that belong to the Category
+     * The books that the book belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-  
+    public function books(): BelongsToMany
+    {
+        return $this->belongsToMany(Book::class, 'books_categories');
+    }
 }
