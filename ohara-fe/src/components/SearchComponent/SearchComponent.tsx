@@ -1,5 +1,5 @@
 import { SearchOutlined } from "@mui/icons-material";
-import { useSearchBooks } from "../../context/SearchBooksContext/SearchBooksContext";
+import { useSearchBooks } from "@/context/SearchBooksContext/SearchBooksContext";
 
 const SearchComponent = () => {
   const { handleSearchBooks } = useSearchBooks();

@@ -1,4 +1,4 @@
-import { BookInterface } from "../../interfaces/BookInterface";
+import { BookInterface } from "@/interfaces/BookInterface";
 
 const BookComponent = ({ book }: { book: BookInterface }) => {
   return (

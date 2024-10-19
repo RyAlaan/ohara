@@ -21,11 +21,16 @@ class CategoryController extends Controller
 
         // search by name
         if ($request->has('name')) {
-            $name = $request->input('name');
+            $name = $request->query('name');
             $query = $query->where('name', $name);
         }
 
-        $categories = $query->with('books')->get();
+        if ($request->has('with')) {
+            $with = $request->query('with');
+            $query = $query->where($with);
+        }
+
+        $categories = $query->get();
 
         // return
         return response()->json([

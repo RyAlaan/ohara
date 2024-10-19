@@ -1,7 +1,7 @@
-import AddPhotoAlternateRoundedIcon from "@mui/icons-material/AddPhotoAlternateRounded";
-import InputComponent from "../../../../components/Input/Input";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import InputComponent from "@/components/Input/Input";
+import { getData, postData } from "@/hooks/apiService";
+import { CategoryInterface } from "@/interfaces/CategoryInterface";
+import { AddPhotoAlternateRounded, AddRounded } from "@mui/icons-material";
 import {
   Checkbox,
   FormControl,
@@ -12,11 +12,9 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AddRounded } from "@mui/icons-material";
-import { CategoryInterface } from "../../../../interfaces/CategoryInterface";
-
-const d = new Date();
 
 const AddBookPage = () => {
   const [categories, setCategories] = useState<CategoryInterface[]>([]);
@@ -24,31 +22,17 @@ const AddBookPage = () => {
   const [selectedImage, setSelectedImage] = useState<any>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const fetchCategories = async () => {
+      try {
+        const result = await getData("/categories");
+        setCategories(result.data);
+      } catch (error: any) {
+        console.error(error.response?.data?.message || "An error occurred");
+      }
+    };
 
-    axios
-      .get("http://localhost:8000/api/categories", {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        // const categoryNames = res.data.data.map(
-        //   (category: { name: string }) => category.name
-        // );
-        console.log("testtt");
-        console.log(res.data.data);
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
+    fetchCategories();
   }, []);
-
-  useEffect(() => {
-    console.log(categories);
-  }, [categories]);
 
   const handleCategoriesChange = (
     event: SelectChangeEvent<typeof selectedCategories>
@@ -68,41 +52,40 @@ const AddBookPage = () => {
     }
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
+    const categoryIds = categories
+      .filter((item) => selectedCategories.includes(item.name))
+      .map((item) => item.id);
+
     const formData = new FormData();
+
+    formData.append("cover", selectedImage[1]);
     formData.append("title", e.currentTarget.title.value);
     formData.append("ISBN", e.currentTarget.ISBN.value);
-    formData.append("releasedYear", e.currentTarget.releasedYear.value);
+    formData.append("releaseDate", e.currentTarget.releaseDate.value);
     formData.append("publisher", e.currentTarget.publisher.value);
     formData.append("stock", e.currentTarget.stock.value);
     formData.append("price", e.currentTarget.price.value);
     formData.append("synopsis", e.currentTarget.synopsis.value);
-    e.currentTarget.author.value
-      .split(", ")
-      .forEach((author: string, index: number) => {
-        formData.append("author-" + index, author);
-      });
-    selectedCategories.forEach((category, index) => {
-      formData.append("category-" + index, category);
-    });
-    formData.append("cover", selectedImage[1]);
+    formData.append("categories", categoryIds.join(", "));
+    formData.append("authors", e.currentTarget.author.value);
 
     axios
       .post("http://localhost:8000/api/books", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Accept: "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        withCredentials: true,
-        responseType: "json",
       })
       .then((res) => {
-        console.log("book added");
+        location.reload();
+        window.location.href = `/dashboard/books?id=${res.data.data.id}`;
       })
       .catch((err) => {
-        console.log(formData);
-        console.log(err);
+        console.log(err.response.data.message);
       });
   };
 
@@ -134,7 +117,7 @@ const AddBookPage = () => {
                   className="h-32 w-auto object-cover"
                 />
               ) : (
-                <AddPhotoAlternateRoundedIcon sx={{ fontSize: 60 }} />
+                <AddPhotoAlternateRounded sx={{ fontSize: 60 }} />
               )}
             </div>
             <p className="text-sm text-[#94A3B8]">
@@ -145,7 +128,7 @@ const AddBookPage = () => {
         </label>
         <div className="px-8 py-5 flex flex-col gap-y-4 bg-white rounded-lg">
           <h1 className="text-2xl font-semibold text-black">Categories</h1>
-          {/* <FormControl className="w-full rounded-lg">
+          <FormControl className="w-full rounded-lg">
             <InputLabel id="categories-checkbox">Categories</InputLabel>
             <Select
               labelId="categories-checkbox"
@@ -161,16 +144,17 @@ const AddBookPage = () => {
                 />
               }
               renderValue={(selected) => selected.join(", ")}
-              // MenuProps={MenuProps}
             >
               {categories.map((category, index) => (
-                <MenuItem key={index} value={category}>
-                  <Checkbox checked={selectedCategories.includes(category)} />
-                  <ListItemText primary={category} />
+                <MenuItem key={index} value={category.name}>
+                  <Checkbox
+                    checked={selectedCategories.includes(category.name)}
+                  />
+                  <ListItemText primary={category.name} />
                 </MenuItem>
               ))}
             </Select>
-          </FormControl> */}
+          </FormControl>
           <Link
             to={"/dashboard/categories/add"}
             className="w-full p-4 flex flex-row items-center gap-x-2 text-purple-700 rounded-lg bg-purple-100 hover:bg-purple-700 hover:text-white transition-colors duration-500"
@@ -206,7 +190,7 @@ const AddBookPage = () => {
             <div className="w-full flex flex-row gap-x-4">
               <InputComponent
                 label="Released Date"
-                name="releasedDate"
+                name="releaseDate"
                 type="date"
                 className="rounded-lg"
               />
@@ -219,7 +203,7 @@ const AddBookPage = () => {
             <div className="w-full flex gap-x-4">
               <InputComponent
                 name="stock"
-                min="1"
+                min="0"
                 type="number"
                 className="rounded-lg"
               />

@@ -19,14 +19,16 @@ class BookController extends Controller
         // query data
         $query = Book::query();
 
+        // localhost:8000/api/books?title=Berotak senku
+
         // search by 
         if ($request->has('title')) {
-            $title = $request->items('title');
+            $title = $request->query('title');
             $query = $query->where('title', $title);
         }
 
         if ($request->has('ISBN')) {
-            $ISBN = $request->items('ISBN');
+            $ISBN = $request->query('ISBN');
             $query = $query->where('ISBN', $ISBN);
         }
 

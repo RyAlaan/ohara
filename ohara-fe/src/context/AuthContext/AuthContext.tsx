@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { UserInterface } from "../../interfaces/UserInterface";
+import { UserInterface } from "@/interfaces/UserInterface";
+import { createContext, useContext, useEffect, useState } from "react";
+import { getData, postData } from "@/hooks/apiService";
 
 interface AuthContextType {
   user: UserInterface | null;
@@ -30,26 +31,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [message, setMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  useEffect(() => {
+  async function authme() {
     setIsLoading(true);
-    const token = localStorage.getItem("token");
+    try {
+      const result = await getData("/auth/authme");
+      setUser(result.data.user);
+    } catch (error: any) {
+      console.error(error.response);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
-    axios
-      .get("http://localhost:8000/api/auth/authme", {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setUser(res.data.data.user);
-        console.log();
-      })
-      .catch(() => {})
-      .finally(() => {
-        setIsLoading(false);
-      });
+  useEffect(() => {
+    authme();
   }, []);
 
   useEffect(() => {
@@ -58,7 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, 8000);
   }, [message]);
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage("");
@@ -68,36 +63,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       password: e.currentTarget.password.value,
     });
 
-    axios
-      .post("http://localhost:8000/api/auth/login", data, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res: any) => {
-        localStorage.setItem("token", res.data.data.token);
-        window.location.href = "/";
-      })
-      .catch((error) => {
-        console.error(error);
-        if (error.response) {
-          setMessage(error.response.data.message);
-        } else if (error.request) {
-          setMessage("No response from server");
-        } else {
-          setMessage(error.message);
-        }
-      })
-      .finally(() => setIsLoading(false));
+    try {
+      const result = await postData("/auth/login", data);
+      localStorage.setItem("token", result.data.token);
+      setUser(result.data.user);
+      window.location.href = "/";
+    } catch (error: any) {
+      console.error(error.response);
+      if (error.response) {
+        setMessage(error.response.data.message);
+      } else if (error.request) {
+        setMessage("No response from server");
+      } else {
+        setMessage(error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage("");
-
-    const token = localStorage.getItem("token");
 
     const data = JSON.stringify({
       name: e.currentTarget.username.value,
@@ -105,44 +93,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       password: e.currentTarget.password.value,
     });
 
-    axios
-      .post("http://localhost:8000/api/auth/register", data, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(() => {
-        window.location.href = "/auth/login";
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.error(error.response.data.message);
-          setMessage(error.response.data.message);
-        }
-      })
-      .finally(() => setIsLoading(false));
+    try {
+      await postData("/auth/register", data);
+      window.location.href = "/auth/login";
+    } catch (error: any) {
+      setMessage(error.response.data.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleLogout = () => {
-    const token = localStorage.getItem("token");
-
-    axios
-      .post(
-        "http://localhost:8000/api/auth/logout",
-        {},
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then(() => {
-        setUser(null);
-      });
+  const handleLogout = async () => {
+    try {
+      await postData("/auth/logout", {});
+      setUser(null);
+      localStorage.removeItem("token");
+    } catch (error: any) {
+      setMessage(error.response.data.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const clearMessage = () => {

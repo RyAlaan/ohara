@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { BookInterface } from "../../interfaces/BookInterface";
+import { BookInterface } from "@/interfaces/BookInterface";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { getData } from "@/hooks/apiService";
 
 interface SearchBooksContextType {
   isLoading: boolean;
@@ -38,22 +39,23 @@ export const SearchBooksProvider = ({
 
   const fetchBooks = async () => {
     setIsLoading(true);
-    const { data } = await axios.get<any>("http://localhost:8000/api/books", {
-      params: {
-        q: queryParam.get("q"),
+    try {
+      const result = await getData("/books", {
+        title: queryParam.get("title"),
         perpage: 12,
-      },
-    });
-
-    setBooks(data.data);
+      });
+      setBooks(result.data);
+    } catch (error: any) {
+      console.error(error.response.data.message);
+    }
     setIsLoading(false);
   };
 
   useEffect(() => {
     fetchBooks();
-  }, [queryParam.get("q")]);
+  }, [queryParam.get("title")]);
 
-  // navigate to "/" ? q=query
+  
   const handleSearchBooks = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const query = e.currentTarget.q.value;

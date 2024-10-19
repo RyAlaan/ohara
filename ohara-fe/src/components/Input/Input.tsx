@@ -1,5 +1,5 @@
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { HTMLInputTypeAttribute, useState } from "react";
 
 interface InputInterface {
@@ -51,7 +51,7 @@ const InputComponent = ({
       />
       <label
         className={clsx(
-          hasValue || value ||type == "date"
+          hasValue || value || type == "date"
             ? "text-violet-700 -translate-y-4 text-sm border-violet-700"
             : "text-black border-white",
           "absolute top-2 left-4 px-2 bg-white border-x-2 transition-all duration-300"

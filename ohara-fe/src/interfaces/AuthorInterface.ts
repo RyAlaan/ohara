@@ -1,4 +1,4 @@
-import { BookInterface } from "./BookInterface";
+import { BookInterface } from "@/BookInterface";
 
 export interface AuthorInterface {
   id: number;
