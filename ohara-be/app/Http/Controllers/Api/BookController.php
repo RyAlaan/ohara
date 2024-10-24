@@ -68,7 +68,7 @@ class BookController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'ISBN' => 'required|unique:books',
-            'releaseDate' => 'required|date',
+            'release_date' => 'required|date',
             'stock' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:1000',
             'publisher' => 'required',
@@ -105,7 +105,7 @@ class BookController extends Controller
         $book = Book::create([
             'title' => $request->title,
             'ISBN' => $request->ISBN,
-            'releaseDate' => $request->releaseDate,
+            'release_date' => $request->release_date,
             'stock' => $request->stock,
             'price' => $request->price,
             'publisher' => $request->publisher,
@@ -124,7 +124,7 @@ class BookController extends Controller
         }
 
         // load author and categories
-        $book->load('categories', 'authors');
+        $book->load(['categories', 'authors']);
 
         $book->categories->makeHidden('pivot');
         $book->authors->makeHidden('pivot');
@@ -145,7 +145,7 @@ class BookController extends Controller
     public function show(string $id)
     {
         // check is data exists
-        $book = Book::where($id)->with('authors')->with('categories')->get();
+        $book = Book::where('id', $id)->with(['authors', 'categories'])->first();
 
         // return 
         return response()->json([
@@ -162,7 +162,7 @@ class BookController extends Controller
     public function update(Request $request, string $id)
     {
         // check is data exists
-        $book = Book::where($id)->get();
+        $book = Book::find($id)->get();
 
         if (!$book) {
             return response()->json([
@@ -177,7 +177,7 @@ class BookController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'ISBN' => 'required|unique:books',
-            'releaseDate' => 'required|date',
+            'release_date' => 'required|date',
             'stock' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:1000',
             'publisher' => 'required',
@@ -195,40 +195,42 @@ class BookController extends Controller
         }
 
         // delete and create new image
-        // check if image is uploaded
         if ($request->hasFile('cover')) {
-
             // upload new image
             $cover = $request->file('cover');
-            $cover->storeAs('public/books', $cover->hashName());
+            $cover->storeAs('public/books'. $cover->hashName());
 
             // delete old image
-            Storage::delete('public/books/' . $book->cover);
+            Storage::delete('public/books'. $cover->hashName());
+        }
 
-            // update book with new image
-            $book->update([
-                'id' => $id,
-                'title' => $request->title,
-                'ISBN' => $request->ISBN,
-                'releaseDate' => $request->releaseDate,
-                'stock' => $request->stock,
-                'price' => $request->price,
-                'publisher' => $request->publisher,
-                'synopsis' => $request->synopsis,
-                'cover' => $cover->hashName(),
-            ]);
-        } else {
-            // update book without image
-            $book->update([
-                'id' => $id,
-                'title' => $request->title,
-                'ISBN' => $request->ISBN,
-                'releaseDate' => $request->releaseDate,
-                'stock' => $request->stock,
-                'price' => $request->price,
-                'publisher' => $request->publisher,
-                'synopsis' => $request->synopsis,
-            ]);
+       // define category
+        $categories = explode(', ', $request->categories);
+
+        // define authors
+        $authors = explode(', ', $request->authors);
+        
+        // update book
+        $book->update([
+            'id' => $id,
+            'title' => $request->title,
+            'ISBN' => $request->ISBN,
+            'cover' => $request->hasFile('cover') ? $cover->hashName() : $book->cover,
+            'release_date' => $request->release_date,
+            'stock' => $request->stock,
+            'price' => $request->price,
+            'publisher' => $request->publisher,
+            'synopsis' => $request->synopsis,
+        ]);
+
+        // connect book to categories
+        $book->categories()->sync($categories);
+
+        // connect book to authors
+        foreach ($authors as $author) {
+            $author = Author::firstOrCreate(['name' => $author]);
+
+            $book->authors()->sync($author->id);
         }
 
         // return

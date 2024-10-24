@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string("title");
             $table->text("synopsis");
             $table->string("publisher");
+            $table->date('release_date');
             $table->string("cover");
             $table->decimal("price", 12, 2);
             $table->integer("stock");

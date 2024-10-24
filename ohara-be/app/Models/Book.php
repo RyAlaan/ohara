@@ -11,14 +11,16 @@ class Book extends Model
     use HasFactory;
 
     protected $table = 'books';
-    public $incrementing = false; // Nonaktifkan auto increment
+    public $incrementing = false;
     protected $keyType = 'string';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
         'ISBN',
         'title',
         'synopsis',
+        'release_date',
         'publisher',
         'cover',
         'price',

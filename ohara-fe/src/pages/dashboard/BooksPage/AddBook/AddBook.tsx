@@ -64,7 +64,7 @@ const AddBookPage = () => {
     formData.append("cover", selectedImage[1]);
     formData.append("title", e.currentTarget.title.value);
     formData.append("ISBN", e.currentTarget.ISBN.value);
-    formData.append("releaseDate", e.currentTarget.releaseDate.value);
+    formData.append("release_date", e.currentTarget.release_date.value);
     formData.append("publisher", e.currentTarget.publisher.value);
     formData.append("stock", e.currentTarget.stock.value);
     formData.append("price", e.currentTarget.price.value);
@@ -189,8 +189,8 @@ const AddBookPage = () => {
             </div>
             <div className="w-full flex flex-row gap-x-4">
               <InputComponent
-                label="Released Date"
-                name="releaseDate"
+                label="Release Date"
+                name="release_date"
                 type="date"
                 className="rounded-lg"
               />

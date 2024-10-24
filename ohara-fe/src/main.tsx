@@ -1,4 +1,3 @@
-import React from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import {
@@ -14,6 +13,8 @@ import AppShell from "./layouts/AppShell/AppShell";
 import DashboardPage from "./pages/dashboard/DashboardPage/DashboardPage";
 import DashboardBooksPage from "./pages/dashboard/BooksPage/DashboardBooks/DashboardBooks";
 import AddBookPage from "./pages/dashboard/BooksPage/AddBook/AddBook";
+import * as React from "react";
+import EditBookPage from "./pages/dashboard/BooksPage/EditBook/EditBook";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -25,6 +26,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/dashboard/books" element={<DashboardBooksPage />} />
             <Route path="/dashboard/books/add" element={<AddBookPage />} />
+            <Route path="/dashboard/books/edit/:id" element={<EditBookPage />} />
           </Route>
           <Route path="/auth">
             <Route path="/auth/login" element={<AuthPage />} />

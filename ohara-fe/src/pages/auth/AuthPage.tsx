@@ -15,7 +15,7 @@ const AuthPage = () => {
       className={clsx(
         { "xl:justify-end": lastPath == "register" },
         { "xl:justify-start": lastPath == "login" },
-        "relative font-poppins min-h-screen flex flex-row justify-center  items-center"
+        "relative font-poppins min-h-screen flex flex-row justify-center items-center"
       )}
     >
       <Alert

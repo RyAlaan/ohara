@@ -13,28 +13,47 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
-import { AddRounded } from "@mui/icons-material";
+import { AddPhotoAlternateRounded, AddRounded } from "@mui/icons-material";
+import { getData } from "@/hooks/apiService";
+import { CategoryInterface } from "@/interfaces/CategoryInterface";
+import { BookInterface } from "@/interfaces/BookInterface";
 
 const EditBookPage = () => {
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<CategoryInterface[]>([]);
+  const [book, setBook] = useState<BookInterface | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const { id } = useParams();
 
-  const d = new Date();
-
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/categories")
-      .then((res) => {
-        const categoryNames = res.data.data.map(
-          (category: { name: string }) => category.name
-        );
-        setCategories(categoryNames);
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
+    const fetchCategories = async () => {
+      try {
+        const result = await getData("/categories");
+        setCategories(result.data);
+      } catch (error: any) {
+        console.error(error.response?.data?.message || "An error occurred");
+      }
+    };
+
+    const fetchBook = async () => {
+      try {
+        const result = await getData(`/books/${id}`);
+        setSelectedImage([result.data.cover, null]);
+        setBook(result.data);
+        if (result.data.categories) {
+          let cat : string[] = [];
+          result.data.categories.map((item: any) => {
+            cat.push(item.name);
+          });
+          setSelectedCategories(cat)
+        }
+      } catch (error: any) {
+        console.error(error.response?.data?.message || "An error occurred");
+      }
+    };
+
+    fetchCategories();
+    fetchBook();
   }, []);
 
   const handleCategoriesChange = (
@@ -55,33 +74,41 @@ const EditBookPage = () => {
     }
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
+    const categoryIds = categories
+      .filter((item) => selectedCategories.includes(item.name))
+      .map((item) => item.id);
+
     const formData = new FormData();
+
+    formData.append("cover", selectedImage[1]);
     formData.append("title", e.currentTarget.title.value);
     formData.append("ISBN", e.currentTarget.ISBN.value);
-    formData.append("releasedDate", e.currentTarget.releasedDate.value);
+    formData.append("release_date", e.currentTarget.release_date.value);
     formData.append("publisher", e.currentTarget.publisher.value);
     formData.append("stock", e.currentTarget.stock.value);
     formData.append("price", e.currentTarget.price.value);
     formData.append("synopsis", e.currentTarget.synopsis.value);
-    formData.append("cover", selectedImage[1]);
-    
+    formData.append("categories", categoryIds.join(", "));
+    formData.append("authors", e.currentTarget.author.value);
+
     axios
-      .post(`http://localhost:8000/api/books/${id}`, formData, {
+      .put(`http://localhost:8000/api/books/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Accept: "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        withCredentials: true,
-        responseType: "json",
       })
       .then((res) => {
-        console.log("book added");
+        location.reload();
+        window.location.href = `/dashboard/books?id=${res.data.data.id}`;
       })
       .catch((err) => {
         console.log(formData);
-        console.log(err);
+        console.log(err.response.data);
       });
   };
 
@@ -97,7 +124,7 @@ const EditBookPage = () => {
         >
           <h1 className="text-2xl font-bold text-black">COVER</h1>
           <div className="">
-            <div className="w-full h-32 flex flex-row justify-center items-center">
+            <div className="w-full h-32 xl:h-48 flex flex-row justify-center items-center">
               <input
                 type="file"
                 hidden
@@ -110,10 +137,10 @@ const EditBookPage = () => {
                 <img
                   src={selectedImage[0]}
                   alt="selected image"
-                  className="h-32 w-auto object-cover"
+                  className="h-32 xl:h-40 w-auto object-cover"
                 />
               ) : (
-                <AddPhotoAlternateRoundedIcon sx={{ fontSize: 60 }} />
+                <AddPhotoAlternateRounded sx={{ fontSize: 60 }} />
               )}
             </div>
             <p className="text-sm text-[#94A3B8]">
@@ -140,12 +167,13 @@ const EditBookPage = () => {
                 />
               }
               renderValue={(selected) => selected.join(", ")}
-              // MenuProps={MenuProps}
             >
               {categories.map((category, index) => (
-                <MenuItem key={index} value={category}>
-                  <Checkbox checked={selectedCategories.includes(category)} />
-                  <ListItemText primary={category} />
+                <MenuItem key={index} value={category.name}>
+                  <Checkbox
+                    checked={selectedCategories.includes(category.name)}
+                  />
+                  <ListItemText primary={category.name} />
                 </MenuItem>
               ))}
             </Select>
@@ -160,7 +188,12 @@ const EditBookPage = () => {
         </div>
         <div className="px-8 py-5 flex flex-col gap-y-4 bg-white rounded-lg">
           <h1 className="text-2xl font-semibold text-black">Authors</h1>
-          <InputComponent name="author" type="text" className="rounded-lg" />
+          <InputComponent
+            name="author"
+            type="text"
+            className="rounded-lg"
+            value={book?.authors?.map((item) => item.name).join(", ")}
+          />
           <p className="text-sm text-[#94A3B8]">
             If author is more than 1 person. Please use comma plus space(, ).
             e.g. Alan Turing, John Doe.
@@ -168,39 +201,46 @@ const EditBookPage = () => {
         </div>
       </div>
       <div className="h-fit w-full flex flex-col items-end gap-y-5">
-        <div className="w-full px-8 py-5 flex flex-col gap-y-3 rounded-lg bg-white">
+        <div className="w-full px-8 py-5 flex flex-col gap-y-3 xl:gap-y-4 rounded-lg bg-white">
           <h1 className="text-4xl font-bold text-black">General</h1>
-          <div className="flex flex-col gap-y-5">
+          <div className="flex flex-col gap-y-5 xl:gap-y-8">
             <div className="inputBox w-full flex flex-col">
-              <InputComponent name="title" type="text" className="rounded-lg" />
+              <InputComponent
+                name="title"
+                type="text"
+                className="rounded-lg"
+                value={book?.title}
+              />
             </div>
             <div className="inputBox w-full flex flex-col">
               <InputComponent
                 label="ISBN"
                 name="ISBN"
                 type="text"
+                value={book?.ISBN}
                 className="rounded-lg"
               />
             </div>
             <div className="w-full flex flex-row gap-x-4">
               <InputComponent
-                label="Released Year"
-                name="releasedDate"
-                type="number"
-                max="2099"
-                value={d.getFullYear()}
+                label="Released Date"
+                name="release_date"
+                type="date"
                 className="rounded-lg"
+                value={book?.release_date}
               />
               <InputComponent
                 name="publisher"
                 type="string"
+                value={book?.publisher}
                 className="rounded-lg"
               />
             </div>
             <div className="w-full flex gap-x-4">
               <InputComponent
                 name="stock"
-                min="1"
+                min="0"
+                value={book?.stock}
                 type="number"
                 className="rounded-lg"
               />
@@ -208,6 +248,7 @@ const EditBookPage = () => {
                 name="price"
                 type="number"
                 className="rounded-lg"
+                value={book?.price}
               />
             </div>
             <textarea
@@ -216,6 +257,7 @@ const EditBookPage = () => {
               rows={4}
               className="peer border-2  px-2 py-3 w-full rounded-lg"
               placeholder="Synopsis"
+              defaultValue={book?.synopsis}
             ></textarea>
           </div>
         </div>

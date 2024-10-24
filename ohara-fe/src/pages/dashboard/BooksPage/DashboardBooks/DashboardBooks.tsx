@@ -77,9 +77,9 @@ const DashboardBooksPage = () => {
                       <div className="p-1 rounded bg-blue-100">
                         <RemoveRedEyeOutlined className="text-blue-600" />
                       </div>
-                      <div className="p-1 rounded bg-yellow-100">
+                      <Link to={`/dashboard/books/edit/${book.id}`} className="p-1 rounded bg-yellow-100">
                         <EditNoteOutlined className="text-yellow-600" />
-                      </div>
+                      </Link>
                       <div className="p-1 rounded bg-red-100">
                         <DeleteOutlineOutlined className="text-red-600" />
                       </div>

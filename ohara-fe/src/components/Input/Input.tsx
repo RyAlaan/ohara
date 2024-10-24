@@ -44,7 +44,7 @@ const InputComponent = ({
         defaultValue={value}
         className={clsx(
           className,
-          hasValue || type == "date" ? "border-violet-700" : "border-slate-300",
+          hasValue ? "border-violet-700" : "border-slate-300",
           "peer border-2 rounded px-2 py-3 w-full"
         )}
         onChange={handleInputChange}
