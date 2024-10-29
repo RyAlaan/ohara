@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\BookController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -35,23 +35,6 @@ Route::prefix('/users')->group(function () {
     Route::get('/{id}', [UserController::class, 'show']);
     Route::put('/{id}', [UserController::class, 'update']);
     Route::delete('/{id}', [UserController::class, 'destroy'])->middleware('auth.admin');
-});
-
-
-Route::prefix('/categories')->group(function () {
-    Route::post('/', [CategoryController::class, 'store']);
-    Route::get('/', [CategoryController::class, 'index']);
-    Route::get('/{id}', [CategoryController::class, 'show']);
-    Route::put('/{id}', [CategoryController::class, 'update']);
-    Route::delete('/{id}', [CategoryController::class, 'destroy']);
-});
-
-Route::prefix('/books')->group(function () {
-    Route::post('/', [BookController::class, 'store']);
-    Route::get('/', [BookController::class, 'index']);
-    Route::get('/{id}', [BookController::class, 'show']);
-    Route::put('/{id}', [BookController::class, 'update']);
-    Route::delete('/{id}', [BookController::class, 'destroy']);
 });
 
 
