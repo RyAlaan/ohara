@@ -248,7 +248,7 @@ class BookController extends Controller
     public function destroy(string $id)
     {
         // check is data exists
-        $book = Book::where($id)->get();
+        $book = Book::find($id);
 
         // delete data
         $book->delete();
