@@ -15,7 +15,7 @@ class Category extends Model
     ];
 
     /**
-     * The books that belong to the Category
+     * The books that the book belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

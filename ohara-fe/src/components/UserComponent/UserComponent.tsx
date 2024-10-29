@@ -1,5 +1,5 @@
 import { Avatar } from "@mui/material";
-import { useAuth } from "../../context/AuthContext/AuthContext";
+import { useAuth } from "@/context/AuthContext/AuthContext";
 
 const UserComponent = () => {
   const { user } = useAuth();

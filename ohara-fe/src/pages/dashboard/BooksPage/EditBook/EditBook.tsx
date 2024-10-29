@@ -1,7 +1,7 @@
-import InputComponent from "@/components/Input/Input";
-import { getData, postData } from "@/hooks/apiService";
-import { CategoryInterface } from "@/interfaces/CategoryInterface";
-import { AddPhotoAlternateRounded, AddRounded } from "@mui/icons-material";
+import AddPhotoAlternateRoundedIcon from "@mui/icons-material/AddPhotoAlternateRounded";
+import InputComponent from "../../../../components/Input/Input";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import {
   Checkbox,
   FormControl,
@@ -12,14 +12,18 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { AddPhotoAlternateRounded, AddRounded } from "@mui/icons-material";
+import { getData } from "@/hooks/apiService";
+import { CategoryInterface } from "@/interfaces/CategoryInterface";
+import { BookInterface } from "@/interfaces/BookInterface";
 
-const AddBookPage = () => {
+const EditBookPage = () => {
   const [categories, setCategories] = useState<CategoryInterface[]>([]);
+  const [book, setBook] = useState<BookInterface | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<any>(null);
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -31,7 +35,25 @@ const AddBookPage = () => {
       }
     };
 
+    const fetchBook = async () => {
+      try {
+        const result = await getData(`/books/${id}`);
+        setSelectedImage([result.data.cover, null]);
+        setBook(result.data);
+        if (result.data.categories) {
+          let cat : string[] = [];
+          result.data.categories.map((item: any) => {
+            cat.push(item.name);
+          });
+          setSelectedCategories(cat)
+        }
+      } catch (error: any) {
+        console.error(error.response?.data?.message || "An error occurred");
+      }
+    };
+
     fetchCategories();
+    fetchBook();
   }, []);
 
   const handleCategoriesChange = (
@@ -42,7 +64,6 @@ const AddBookPage = () => {
     } = event;
     setSelectedCategories(typeof value === "string" ? value.split(",") : value);
   };
-
 
   const handleSelectedImage = (e: any) => {
     const file = e.target.files[0];
@@ -74,7 +95,7 @@ const AddBookPage = () => {
     formData.append("authors", e.currentTarget.author.value);
 
     axios
-      .post("http://localhost:8000/api/books", formData, {
+      .put(`http://localhost:8000/api/books/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Accept: "application/json",
@@ -86,7 +107,8 @@ const AddBookPage = () => {
         window.location.href = `/dashboard/books?id=${res.data.data.id}`;
       })
       .catch((err) => {
-        console.log(err.response.data.message);
+        console.log(formData);
+        console.log(err.response.data);
       });
   };
 
@@ -102,7 +124,7 @@ const AddBookPage = () => {
         >
           <h1 className="text-2xl font-bold text-black">COVER</h1>
           <div className="">
-            <div className="w-full h-32 flex flex-row justify-center items-center">
+            <div className="w-full h-32 xl:h-48 flex flex-row justify-center items-center">
               <input
                 type="file"
                 hidden
@@ -115,7 +137,7 @@ const AddBookPage = () => {
                 <img
                   src={selectedImage[0]}
                   alt="selected image"
-                  className="h-32 w-auto object-cover"
+                  className="h-32 xl:h-40 w-auto object-cover"
                 />
               ) : (
                 <AddPhotoAlternateRounded sx={{ fontSize: 60 }} />
@@ -166,7 +188,12 @@ const AddBookPage = () => {
         </div>
         <div className="px-8 py-5 flex flex-col gap-y-4 bg-white rounded-lg">
           <h1 className="text-2xl font-semibold text-black">Authors</h1>
-          <InputComponent name="author" type="text" className="rounded-lg" />
+          <InputComponent
+            name="author"
+            type="text"
+            className="rounded-lg"
+            value={book?.authors?.map((item) => item.name).join(", ")}
+          />
           <p className="text-sm text-[#94A3B8]">
             If author is more than 1 person. Please use comma plus space(, ).
             e.g. Alan Turing, John Doe.
@@ -174,30 +201,38 @@ const AddBookPage = () => {
         </div>
       </div>
       <div className="h-fit w-full flex flex-col items-end gap-y-5">
-        <div className="w-full px-8 py-5 flex flex-col gap-y-3 rounded-lg bg-white">
+        <div className="w-full px-8 py-5 flex flex-col gap-y-3 xl:gap-y-4 rounded-lg bg-white">
           <h1 className="text-4xl font-bold text-black">General</h1>
-          <div className="flex flex-col gap-y-5">
+          <div className="flex flex-col gap-y-5 xl:gap-y-8">
             <div className="inputBox w-full flex flex-col">
-              <InputComponent name="title" type="text" className="rounded-lg" />
+              <InputComponent
+                name="title"
+                type="text"
+                className="rounded-lg"
+                value={book?.title}
+              />
             </div>
             <div className="inputBox w-full flex flex-col">
               <InputComponent
                 label="ISBN"
                 name="ISBN"
                 type="text"
+                value={book?.ISBN}
                 className="rounded-lg"
               />
             </div>
             <div className="w-full flex flex-row gap-x-4">
               <InputComponent
-                label="Release Date"
+                label="Released Date"
                 name="release_date"
                 type="date"
                 className="rounded-lg"
+                value={book?.release_date}
               />
               <InputComponent
                 name="publisher"
                 type="string"
+                value={book?.publisher}
                 className="rounded-lg"
               />
             </div>
@@ -205,6 +240,7 @@ const AddBookPage = () => {
               <InputComponent
                 name="stock"
                 min="0"
+                value={book?.stock}
                 type="number"
                 className="rounded-lg"
               />
@@ -212,6 +248,7 @@ const AddBookPage = () => {
                 name="price"
                 type="number"
                 className="rounded-lg"
+                value={book?.price}
               />
             </div>
             <textarea
@@ -220,6 +257,7 @@ const AddBookPage = () => {
               rows={4}
               className="peer border-2  px-2 py-3 w-full rounded-lg"
               placeholder="Synopsis"
+              defaultValue={book?.synopsis}
             ></textarea>
           </div>
         </div>
@@ -242,4 +280,4 @@ const AddBookPage = () => {
   );
 };
 
-export default AddBookPage;
+export default EditBookPage;

@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
-import SidebarLayout from "../SidebarLayout/SidebarLayout";
 import NavbarLayout from "../NavbarLayout/NavbarLayout";
-import { SearchBooksProvider } from "../../context/SearchBooksContext/SearchBooksContext";
+import SidebarLayout from "../SidebarLayout/SidebarLayout";
+import { SearchBooksProvider } from "@/context/SearchBooksContext/SearchBooksContext";
 
 const disableSidebar = ["/404", "/auth/login", "/auth/register"];
 const disableNavbar = ["/404", "/auth/login", "/auth/register"];

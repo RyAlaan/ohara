@@ -1,8 +1,7 @@
-import clsx from "clsx";
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext/AuthContext";
-import { CircularProgress } from "@mui/material";
+import { useAuth } from "@/context/AuthContext/AuthContext";
+import { clsx } from "clsx";
 
 interface AuthLayoutProps {
   children: ReactNode;

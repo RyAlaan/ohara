@@ -1,4 +1,4 @@
-import { BookInterface } from "../../interfaces/BookInterface";
+import { BookInterface } from "@/interfaces/BookInterface";
 
 const BorrowingConfirmComponent = ({book}: { book: BookInterface }) => {
   return (

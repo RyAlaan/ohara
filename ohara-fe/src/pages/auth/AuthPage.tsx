@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import InputComponent from "../../components/Input/Input";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import AuthLayout from "../../layouts/AuthLayout/AuthLayout";
 import { useAuth } from "../../context/AuthContext/AuthContext";
 import { Alert } from "@mui/material";
@@ -8,14 +8,14 @@ import { Alert } from "@mui/material";
 const AuthPage = () => {
   const path = useLocation();
   const lastPath = path.pathname.split("/").pop();
-  const { message } = useAuth();  
+  const { message } = useAuth();
 
   return (
     <div
       className={clsx(
-        { "justify-center xl:justify-end": lastPath == "register" },
-        { "justify-center xl:justify-start": lastPath == "login" },
-        "relative font-poppins min-h-screen flex flex-row items-center"
+        { "xl:justify-end": lastPath == "register" },
+        { "xl:justify-start": lastPath == "login" },
+        "relative font-poppins min-h-screen flex flex-row justify-center items-center"
       )}
     >
       <Alert

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger("author_id");
             $table->string("book_id");
             $table->timestamps();
-            $table->foreign("author_id")->references("id")->on("authors")->onUpdate("CASCADE")->onDelete("NO ACTION");
-            $table->foreign("book_id")->references("id")->on("books")->onUpdate("CASCADE")->onDelete("NO ACTION");
+            $table->foreign("author_id")->references("id")->on("authors")->onUpdate("CASCADE")->onDelete("CASCADE");
+            $table->foreign("book_id")->references("id")->on("books")->onUpdate("CASCADE")->onDelete("CASCADE");
         });
     }
 
