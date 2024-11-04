@@ -1,5 +1,5 @@
 import InputComponent from "@/components/Input/Input";
-import { getData, postData } from "@/hooks/apiService";
+import { useGetData, usePostData } from "@/hooks/apiService";
 import { CategoryInterface } from "@/interfaces/CategoryInterface";
 import { AddPhotoAlternateRounded, AddRounded } from "@mui/icons-material";
 import {
@@ -24,7 +24,7 @@ const AddBookPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const result = await getData("/categories");
+        const result = await useGetData("/categories");
         setCategories(result.data);
       } catch (error: any) {
         console.error(error.response?.data?.message || "An error occurred");
@@ -42,7 +42,6 @@ const AddBookPage = () => {
     } = event;
     setSelectedCategories(typeof value === "string" ? value.split(",") : value);
   };
-
 
   const handleSelectedImage = (e: any) => {
     const file = e.target.files[0];
@@ -86,16 +85,16 @@ const AddBookPage = () => {
         window.location.href = `/dashboard/books?id=${res.data.data.id}`;
       })
       .catch((err) => {
-        console.log(err.response.data.message);
+        console.error(err.response.data.message);
       });
   };
 
   return (
     <form
       onSubmit={(e) => handleSubmit(e)}
-      className="w-full p-6 flex flex-row gap-x-6 font-poppins"
+      className="w-full p-4 md:p-6 flex flex-col md:flex-row gap-y-4 gap-x-6 font-poppins"
     >
-      <div className="flex flex-col gap-y-6">
+      <div className="flex flex-col gap-y-4 md:gap-y-6">
         <label
           htmlFor="cover"
           className="h-fit px-6 py-3 flex flex-col gap-y-3 rounded-lg bg-white"
@@ -173,7 +172,7 @@ const AddBookPage = () => {
           </p>
         </div>
       </div>
-      <div className="h-fit w-full flex flex-col items-end gap-y-5">
+      <div className="h-fit w-full flex flex-col items-end gap-y-4 md:gap-y-6">
         <div className="w-full px-8 py-5 flex flex-col gap-y-3 rounded-lg bg-white">
           <h1 className="text-4xl font-bold text-black">General</h1>
           <div className="flex flex-col gap-y-5">
@@ -188,7 +187,7 @@ const AddBookPage = () => {
                 className="rounded-lg"
               />
             </div>
-            <div className="w-full flex flex-row gap-x-4">
+            <div className="w-full flex flex-col md:flex-row gap-y-4 gap-x-4">
               <InputComponent
                 label="Release Date"
                 name="release_date"
@@ -201,7 +200,7 @@ const AddBookPage = () => {
                 className="rounded-lg"
               />
             </div>
-            <div className="w-full flex gap-x-4">
+            <div className="w-full flex flex-col md:flex-row gap-y-4 gap-x-4">
               <InputComponent
                 name="stock"
                 min="0"
@@ -226,7 +225,7 @@ const AddBookPage = () => {
         <div className="flex flex-row gap-x-3">
           <button
             type="reset"
-            className="w-full px-4 py-1.5 rounded-lg bg-slate-200 text-black"
+            className="w-full px-4 py-1.5 rounded-lg bg-purple-100 text-lightPrimary font-medium"
           >
             Cancel
           </button>

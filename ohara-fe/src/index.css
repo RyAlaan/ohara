@@ -3,29 +3,50 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: 'Poppins';
-    font-weight: 400;
-    font-style: normal;
-    src: url(../public/fonts/Poppins-Regular.ttf);
+  font-family: "Poppins";
+  font-weight: 400;
+  font-style: normal;
+  src: url(../public/fonts/Poppins-Regular.ttf);
 }
 
 @font-face {
-    font-family: 'Poppins';
-    font-weight: 500;
-    font-style: normal;
-    src: url(../public/fonts/Poppins-Medium.ttf);
+  font-family: "Poppins";
+  font-weight: 500;
+  font-style: normal;
+  src: url(../public/fonts/Poppins-Medium.ttf);
 }
 
 @font-face {
-    font-family: 'Poppins';
-    font-weight: 600;
-    font-style: normal;
-    src: url(../public/fonts/Poppins-SemiBold.ttf);
+  font-family: "Poppins";
+  font-weight: 600;
+  font-style: normal;
+  src: url(../public/fonts/Poppins-SemiBold.ttf);
 }
 
 @font-face {
-    font-family: 'Poppins';
-    font-weight: 600;
-    font-style: normal;
-    src: url(../public/fonts/Poppins-Bold.ttf);
+  font-family: "Poppins";
+  font-weight: 600;
+  font-style: normal;
+  src: url(../public/fonts/Poppins-Bold.ttf);
+}
+
+/* styles.css */
+.scrollbar-thin {
+  overflow-y: auto; 
+  scrollbar-width: thin; 
+  scrollbar-color: transparent #f1f1f1; 
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px; 
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: transparent; 
+  border-radius: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f1f1f1; 
 }

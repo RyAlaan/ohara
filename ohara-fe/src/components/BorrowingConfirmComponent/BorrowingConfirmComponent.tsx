@@ -29,7 +29,7 @@ const BorrowingConfirmComponent = ({book}: { book: BookInterface }) => {
         <button className="px-2.5 py-1 text-xs font-medium rounded bg-lightPrimary text-white">
           Confirm
         </button>
-        <div className="px-2.5 py-0.5 rounded font-semibold text-[#FDE047] text-xs bg-yellow-600">
+        <div className="px-2.5 py-0.5 text-sm font-medium rounded bg-yellow-100 text-yellow-500">
           Awaiting Confirmation
         </div>
       </div>

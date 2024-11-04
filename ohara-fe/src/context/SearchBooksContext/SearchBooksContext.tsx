@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { BookInterface } from "@/interfaces/BookInterface";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { getData } from "@/hooks/apiService";
+import { useGetData } from "@/hooks/apiService";
 
 interface SearchBooksContextType {
   isLoading: boolean;
@@ -40,7 +40,7 @@ export const SearchBooksProvider = ({
   const fetchBooks = async () => {
     setIsLoading(true);
     try {
-      const result = await getData("/books", {
+      const result = await useGetData("/books", {
         title: queryParam.get("title"),
         perpage: 12,
       });
@@ -55,7 +55,6 @@ export const SearchBooksProvider = ({
     fetchBooks();
   }, [queryParam.get("title")]);
 
-  
   const handleSearchBooks = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const query = e.currentTarget.q.value;

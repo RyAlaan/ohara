@@ -84,7 +84,7 @@ class UserController extends Controller
             'email' =>  'required|email|unique:users',
             'password' => 'required|min:6',
             'role' => 'nullable',
-            'profile' => 'nullable|mimes:jpg,jpeg,png|max:2048',
+            'profile' => 'required|mimes:jpg,jpeg,png|max:2048',
             'phone' => 'required|unique:user_details',
             'address' => 'required',
             'gender' => 'required',
@@ -100,9 +100,11 @@ class UserController extends Controller
         }
 
         // upload profile
-        if ($request->file('profile')) {
+        $profileName = null;
+        if ($request->hasFile('profile')) {
             $profile = $request->file('profile');
-            $profile->storeAs('profile/users/', $profile->hashName());
+            $profileName = $profile->hashName();
+            $profile->storeAs('public/users', $profileName);
         }
 
         // create data
@@ -113,9 +115,6 @@ class UserController extends Controller
             'role' => $request->role ? $request->role : 'user',
         ]);
 
-        $phone =
-            substr($request->phone, 0, 4) . '-' . substr($request->phone, 4, 4) . '-' . substr($request->phone, 8);
-
         UserDetail::create([
             'user_id' => $user->id,
             'profile' =>
@@ -124,10 +123,10 @@ class UserController extends Controller
                 : "",
             'gender' => $request->gender,
             'address' => $request->address,
-            'phone' => $phone,
+            'phone' => $request->phone,
         ]);
 
-        $user->load('userDetail');
+        $user->load('userDetail')->get();
 
         // return
         return response()->json([

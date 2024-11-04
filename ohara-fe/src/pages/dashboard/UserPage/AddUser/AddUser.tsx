@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import InputComponent from "../../../../components/Input/Input";
 import axios from "axios";
-import AddPhotoAlternateRoundedIcon from "@mui/icons-material/AddPhotoAlternateRounded";
 import {
   Alert,
   FormControl,
@@ -10,7 +9,8 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import clsx from "clsx";
+import { clsx } from "clsx";
+import { AddPhotoAlternateRounded } from "@mui/icons-material";
 
 const AddUserPage = () => {
   const [selectedImage, setSelectedImage] = useState<any>(null);
@@ -26,7 +26,7 @@ const AddUserPage = () => {
 
     if (file) {
       const fileUrl = URL.createObjectURL(file);
-      setSelectedImage({ preview: fileUrl, file: file });
+      setSelectedImage([fileUrl, file]);
     }
   };
 
@@ -49,7 +49,7 @@ const AddUserPage = () => {
     formData.append("gender", inputSelectVal.gender);
     formData.append("phone", e.currentTarget.phone.value);
     formData.append("address", e.currentTarget.address.value);
-    selectedImage && formData.append("profile", selectedImage.file);
+    formData.append("profile", selectedImage[1]);
 
     axios
       .post("http://localhost:8000/api/users", formData, {
@@ -61,15 +61,14 @@ const AddUserPage = () => {
       })
       .then((res) => {
         if (res.status === 201) {
-          console.log(res.data.message);
           window.location.href = "/dashboard/users";
         }
       })
       .catch((err) => {
         if (err.response.data.statusCode === 422) {
-          console.log(formData);
-          // setMessage(err.response.data.message);
-          console.log(err.response.data.message);
+          console.error(formData);
+          setMessage(err.response.data.message);
+          console.error(err.response.data.message);
         } else {
           setMessage(err.response.data.message);
         }
@@ -77,7 +76,6 @@ const AddUserPage = () => {
       .finally(() => setIsLoading(false));
   };
 
-  // clear message
   useEffect(() => {
     setTimeout(() => {
       message && setMessage("");
@@ -99,37 +97,34 @@ const AddUserPage = () => {
       >
         {message}
       </Alert>
-      <div className="flex flex-col gap-y-6">
+      <div className="xl:w-4/12 flex flex-col gap-y-6">
         <label
-          htmlFor="cover"
-          className="h-fit px-6 py-3 flex flex-col gap-y-3 rounded-lg bg-white"
+          htmlFor="profile"
+          className="h-fit px-6 py-3 flex flex-col gap-y-3 xl:gap-y-16 rounded-lg bg-white"
         >
-          <h1 className="text-2xl font-bold text-black">COVER</h1>
-          <div className="">
-            <div className="w-full h-32 flex flex-row justify-center items-center">
-              <input
-                type="file"
-                hidden
-                name="cover"
-                id="cover"
-                accept="image/png, image/jpg, image/jpeg"
-                onChange={handleSelectedImage}
+          <h1 className="text-2xl font-bold text-black">profile</h1>
+          <div className="w-full h-32 flex flex-row justify-center items-center">
+            <input
+              type="file"
+              hidden
+              name="profile"
+              id="profile"
+              accept="image/png, image/jpg, image/jpeg"
+              onChange={handleSelectedImage}
+            />
+            {selectedImage ? (
+              <img
+                src={selectedImage[0]}
+                alt="selected image"
+                className="h-32 w-auto object-profile"
               />
-              {selectedImage ? (
-                <img
-                  src={selectedImage.preview}
-                  alt="selected image"
-                  className="h-32 w-auto object-cover"
-                />
-              ) : (
-                <AddPhotoAlternateRoundedIcon sx={{ fontSize: 60 }} />
-              )}
-            </div>
-            <p className="text-sm text-[#94A3B8]">
-              Chose cover image. Only *.png, *.jpg and *.jpeg. Maximum file is
-              2MB{" "}
-            </p>
+            ) : (
+              <AddPhotoAlternateRounded sx={{ fontSize: 60 }} />
+            )}
           </div>
+          <p className="text-sm text-[#94A3B8]">
+            Chose profile image. Only *.png, *.jpg and *.jpeg. Maximum file is 2MB{" "}
+          </p>
         </label>
         <div className="px-8 py-5 flex flex-col gap-y-6 bg-white">
           <FormControl fullWidth>
@@ -164,8 +159,9 @@ const AddUserPage = () => {
           </FormControl>
         </div>
       </div>
-      <div className="h-fit w-full flex flex-col items-end gap-y-5">
-        <div className="px-8 py-5 flex flex-col gap-y-5 rounded-lg bg-white">
+      <div className="h-fit xl:w-8/12 flex flex-col items-end gap-y-5">
+        <div className="w-full px-8 py-5 flex flex-col gap-y-5 rounded-lg bg-white">
+          <h1 className="text-4xl font-bold text-black">General</h1>
           <div className="inputBox w-full flex flex-col">
             <InputComponent name="name" type="text" className="rounded-lg" />
           </div>

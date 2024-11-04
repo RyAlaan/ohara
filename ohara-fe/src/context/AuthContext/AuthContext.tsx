@@ -1,7 +1,7 @@
 import axios from "axios";
 import { UserInterface } from "@/interfaces/UserInterface";
 import { createContext, useContext, useEffect, useState } from "react";
-import { getData, postData } from "@/hooks/apiService";
+import { useGetData, usePostData } from "@/hooks/apiService";
 
 interface AuthContextType {
   user: UserInterface | null;
@@ -34,8 +34,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   async function authme() {
     setIsLoading(true);
     try {
-      const result = await getData("/auth/authme");
-      setUser(result.data.user);
+      const result = await useGetData("/auth/authme");
+      setUser(result.data);
     } catch (error: any) {
       console.error(error.response);
     } finally {
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     try {
-      const result = await postData("/auth/login", data);
+      const result = await usePostData("/auth/login", data);
       localStorage.setItem("token", result.data.token);
       setUser(result.data.user);
       window.location.href = "/";
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     try {
-      await postData("/auth/register", data);
+      await usePostData("/auth/register", data);
       window.location.href = "/auth/login";
     } catch (error: any) {
       setMessage(error.response.data.message);
@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleLogout = async () => {
     try {
-      await postData("/auth/logout", {});
+      await usePostData("/auth/logout", {});
       setUser(null);
       localStorage.removeItem("token");
     } catch (error: any) {

@@ -1,23 +1,17 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { useDeleteData, useGetData } from "@/hooks/apiService";
+import { PaginationInterface } from "@/interfaces/PaginationInterface";
+import { UserInterface } from "@/interfaces/UserInterface";
 import {
   Add,
   DeleteOutlineOutlined,
   EditNoteOutlined,
+  KeyboardArrowDownRounded,
 } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { Alert, Avatar, CircularProgress, Pagination } from "@mui/material";
 import axios from "axios";
-import { UserInterface } from "../../../../interfaces/UserInterface";
-import { PaginationInterface } from "../../../../interfaces/PaginationInterface";
-import {
-  Alert,
-  Avatar,
-  Box,
-  CircularProgress,
-  Modal,
-  Pagination,
-  Typography,
-} from "@mui/material";
-import clsx from "clsx";
+import { clsx } from "clsx";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -33,8 +27,8 @@ const style = {
 
 const DashboardUserPage = () => {
   const [users, setUsers] = useState<UserInterface[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [queryParam, _] = useSearchParams();
-  const [open, setOpen] = useState(false);
   const [message, setMessage] = useState<{
     message: string | null;
     status: "success" | "error" | null;
@@ -43,26 +37,19 @@ const DashboardUserPage = () => {
     null
   );
 
-  const deleteUser = (id: number) => {
-    axios
-      .delete(`http://localhost:8000/api/users/${id}`, {
-        headers: {
-          Accept: "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((res) => {
-        window.location.reload();
-        setMessage({ message: res.data.message, status: "success" });
-      })
-      .catch((err) => {
-        setMessage({ message: err.res.data.message, status: "error" });
-      });
+  const deleteUser = async (id: number) => {
+    setLoading(true);
+    const result = await useDeleteData(`/users/${id}`);
+    if (result.status) {
+      // window.location.reload();
+      setMessage({ message: result.message, status: "success" });
+    } else {
+      setMessage({ message: result.message, status: "error" });
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
-    console.log(message.message);
-
     setTimeout(() => {
       message &&
         setMessage({
@@ -73,29 +60,28 @@ const DashboardUserPage = () => {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    async function fetchUser() {
+      setLoading(true);
+      const param = {
+        perPage: queryParam.get("perPage"),
+        page: queryParam.get("page"),
+        name: queryParam.get("name"),
+        email: queryParam.get("email"),
+        role: queryParam.get("role"),
+      };
 
-    axios
-      .get("http://localhost:8000/api/users", {
-        params: {
-          perPage: queryParam.get("perPage"),
-          page: queryParam.get("page"),
-          name: queryParam.get("name"),
-          email: queryParam.get("email"),
-          role: queryParam.get("role"),
-        },
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      })
-      .then((res) => {
-        setMessage({ message: res.data.message, status: "success" });
-        setPagination(res.data.pagination);
-        setUsers(res.data.data);
-      })
-      .catch((err) => {
-        setMessage({ message: err.res.data.message, status: "error" });
-      });
+      const result = await useGetData("/users", param);
+      if (result.status) {
+        setMessage({ message: result.message, status: "success" });
+        setPagination(result.pagination);
+        setUsers(result.data);
+      } else {
+        setMessage({ message: result.message, status: "error" });
+      }
+      setLoading(false);
+    }
+
+    fetchUser();
   }, []);
 
   return (
@@ -121,7 +107,7 @@ const DashboardUserPage = () => {
                bg-purple-100 cursor-pointer"
               >
                 <p>Show More</p>
-                {/* <KeyboardArrowDownRounded /> */}
+                <KeyboardArrowDownRounded />
               </div>
             </div>
             <Link
@@ -145,8 +131,8 @@ const DashboardUserPage = () => {
             </div>
           </div>
           <div className="body">
-            {users ? (
-              users.map((user, id) => (
+            {!loading ? (
+              users?.map((user, id) => (
                 <div
                   key={id}
                   className="tr min-w-full px-2 py-3 flex flex-row justify-between items-center gap-x-3 border-b border-slate-300"

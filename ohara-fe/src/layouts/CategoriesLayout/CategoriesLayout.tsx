@@ -13,12 +13,10 @@ const CategoriesLayout = ({
   categories: CategoryBtnInterface[];
 }) => {
   return (
-    <div className="Categories w-fit flex flex-row gap-x-7">
-      {categories.map(({ text, to, className }) => {
-        return (
-          <CategoryBtn key={text} text={text} to={to} className={className} />
-        );
-      })}
+    <div className="Categories w-full md:w-fit max-w-full scroll-m-7 flex flex-row overflow-x-auto whitespace-nowrap gap-x-3 md:gap-x-7 scrollbar-thin">
+      {categories.map(({ text, to, className }) => (
+        <CategoryBtn key={text} text={text} to={to} className={className} />
+      ))}
     </div>
   );
 };

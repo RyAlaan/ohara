@@ -8,9 +8,10 @@ const NavbarLayout = () => {
   const { user } = useAuth();
 
   return (
-    <div className="navbar sticky top-0 z-[100] min-h-20 w-full px-5 flex justify-between items-center bg-white">
+    //  md:min-h-20 w-full px-1.5 sm:px-5 py-2.5 sm:py-5
+    <div className="navbar sticky top-0 z-[100] px-5 py-2 md:py-5 flex justify-between items-center bg-white">
       <SearchComponent />
-      <div className="tools hidden md:flex items-center gap-x-10">
+      <div className="tools md:flex items-center gap-x-10">
         <ToggleDarkModeComponent />
         {user ? <UserComponent /> : <UserSkeleton />}
       </div>

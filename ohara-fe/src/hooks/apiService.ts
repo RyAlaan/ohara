@@ -14,13 +14,11 @@ const header = {
   Authorization: `Bearer${token}`,
 };
 
-export const getData = async (url: string, params?: object) => {
+export const useGetData = async (url: string, params?: object) => {
   try {
-    const response = await apiService.get(url, {
+    const response = await apiService.get(url,{
+      params : params,
       headers: header,
-      params: {
-        q : "Berotak senku",
-      },
     });
     return response.data;
   } catch (error) {
@@ -28,11 +26,20 @@ export const getData = async (url: string, params?: object) => {
   }
 };
 
-export const postData = async (url: string, data: any) => {
-  console.log(data);
-  
+export const usePostData = async (url: string, data: any) => {
   try {
     const response = await apiService.post(url, data, { headers: header });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const useDeleteData = async (url: string) => {
+  try {
+    const response = await apiService.delete(url, {
+      headers: header,
+    });
     return response.data;
   } catch (error) {
     throw error;

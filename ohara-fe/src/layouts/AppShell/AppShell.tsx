@@ -2,6 +2,8 @@ import { Outlet, useLocation } from "react-router-dom";
 import NavbarLayout from "../NavbarLayout/NavbarLayout";
 import SidebarLayout from "../SidebarLayout/SidebarLayout";
 import { SearchBooksProvider } from "@/context/SearchBooksContext/SearchBooksContext";
+import BottomNavbar from "../BottomNavbar/BottomNavbar";
+
 
 const disableSidebar = ["/404", "/auth/login", "/auth/register"];
 const disableNavbar = ["/404", "/auth/login", "/auth/register"];
@@ -15,7 +17,10 @@ const AppShell = () => {
         {!disableSidebar.includes(location.pathname) && <SidebarLayout />}
         <div className="content w-full">
           {!disableNavbar.includes(location.pathname) && <NavbarLayout />}
-          <>{<Outlet />}</>
+          <div>
+            <Outlet />
+          </div>
+          {!disableNavbar.includes(location.pathname) && <BottomNavbar />}
         </div>
       </main>
     </SearchBooksProvider>

@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { NavLink, To, useLocation } from "react-router-dom";
+import { NavLink, To } from "react-router-dom";
 
 interface CategoryBtnInterface {
   text: string;
@@ -14,14 +14,14 @@ const CategoryBtn = ({ text, to, className }: CategoryBtnInterface) => {
       className={({ isActive }: { isActive: Boolean }) =>
         clsx(
           className,
-          "py-2 px-6 rounded-lg text-base font-medium transition-all duration-500",
+          "py-2 px-6 w-full inline-block rounded-lg text-sm md:text-base font-medium transition-all duration-500",
           isActive
             ? "bg-purple-600 text-white hover:bg-purple-700"
             : "bg-white hover:bg-purple-100"
         )
       }
     >
-      <p>{text}</p>
+      <p className="w-max">{text}</p>
     </NavLink>
   );
 };

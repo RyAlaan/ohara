@@ -26,11 +26,11 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="main-content w-full flex flex-col p-5 gap-y-5">
+    <main className="main-content w-full flex flex-col p-3 md:p-5 gap-y-3 md:gap-y-5 overflow-x-hidden">
       <CategoriesLayout categories={categories} />
       <BooksLayout />
       <BorrowingProgressLayout />
-    </div>
+    </main>
   );
 };
 

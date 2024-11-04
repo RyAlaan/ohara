@@ -10,7 +10,7 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { UserInterface } from "../../../../interfaces/UserInterface";
 import { useParams } from "react-router-dom";
 
@@ -40,8 +40,11 @@ const EditUserPage = () => {
           ...prevState,
           role: res.data.data.role,
           gender: res.data.data.user_detail.gender,
-        }))
-        setSelectedImage({ preview: "http://localhost:8000" + res.data.data.user_detail.profile, file: null });
+        }));
+        setSelectedImage({
+          preview: "http://localhost:8000" + res.data.data.user_detail.profile,
+          file: null,
+        });
         setUser(res.data.data);
       })
       .catch((res) => {
@@ -94,7 +97,7 @@ const EditUserPage = () => {
       })
       .catch((err) => {
         if (err.response.data.statusCode === 422) {
-          console.log(err.response.data.message);
+          console.error(err.response.data.message);
         } else {
           setMessage(err.response.data.message);
         }
