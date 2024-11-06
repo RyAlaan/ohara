@@ -8,7 +8,6 @@ import {
   LibraryBooksOutlined,
   Login,
   Logout,
-  WidgetsOutlined,
 } from "@mui/icons-material";
 import SidebarBtn from "../../components/SidebarBtnComponent/SidebarBtnComponent";
 import { useAuth } from "../../context/AuthContext/AuthContext";
@@ -49,10 +48,6 @@ const SidebarLayout = () => {
       <SidebarBtn url="/dashboard/books/">
         <LibraryBooksOutlined />
         Books
-      </SidebarBtn>
-      <SidebarBtn url="/dashboard/categories/">
-        <WidgetsOutlined />
-        Categories
       </SidebarBtn>
       <SidebarBtn url="/dashboard/users/">
         <GroupOutlined />

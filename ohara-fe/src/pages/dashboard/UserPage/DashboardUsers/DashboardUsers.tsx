@@ -85,7 +85,7 @@ const DashboardUserPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full p-6">
+    <div className="min-h-screen w-full p-6 overflow-hidden">
       <Alert
         className={clsx(
           { "translate-y-48": message.message },
@@ -96,77 +96,70 @@ const DashboardUserPage = () => {
       >
         {message.message}
       </Alert>
-      <div className="min-h-screen min-w-[586px] w-full px-5 pt-3 pb-5 flex flex-col gap-y-6 rounded xl:rounded-lg bg-white">
-        <div className="w-full flex flex-row justify-between">
-          <h4 className="font-semibold text-xl">All Users</h4>
-          <div className="w-fit flex flex-row gap-x-5">
+      <div className="w-full px-5 pt-3 pb-5 flex flex-col gap-y-6 rounded xl:rounded-lg bg-white overflow-hidden">
+        <div className="w-full flex flex-col md:flex-row justify-between gap-y-3 overflow-hidden">
+          <h4 className="font-semibold text-xl">All Books</h4>
+          <div className="w-fit flex flex-col md:flex-row gap-y-2 gap-x-5">
             <div className="flex flex-row items-center gap-x-3">
-              <p className="font-medium">Categories</p>
+              <p className="text-sm font-medium">Categories</p>
               <div
-                className="p-2.5 flex flex-row gap-2 rounded-md font-bold text-purple-700
+                className="p-1 md:p-2.5 flex flex-row gap-1 md:gap-2 rounded-md text-sm font-bold text-purple-700
                bg-purple-100 cursor-pointer"
               >
                 <p>Show More</p>
-                <KeyboardArrowDownRounded />
+                <KeyboardArrowDownRounded sx={{ fontSize: 20 }} />
               </div>
             </div>
             <Link
               to={"/dashboard/users/add"}
-              className="p-2.5 flex flex-row gap-2 rounded-md font-bold text-purple-700 bg-purple-100"
+              className="w-fit p-2 md:p-2.5 flex flex-row gap-1 md:gap-2 rounded-md text-sm font-bold text-purple-700 bg-purple-100"
             >
-              <Add></Add>
-              <p>Add User</p>
+              <Add sx={{ fontSize: 20 }} />
+              <p>Add Book</p>
             </Link>
           </div>
         </div>
-        <div className="font-sans flex flex-col gap-2 rounded-t overflow-hidden">
-          <div className="thead">
-            <div className="tr min-w-full px-2 py-3 flex flex-row justify-between gap-x-3 bg-slate-100">
-              <div className="th min-w-12 text-end">No</div>
-              <div className="th min-w-64">user</div>
-              <div className="th min-w-20 text-end">role</div>
-              <div className="th min-w-20 text-end">gender</div>
-              <div className="th min-w-32 text-end">phone</div>
-              <div className="th min-w-40 text-center">action</div>
+        {/* begin table */}
+        <div className="w-full max-w-full p-6 rounded-md">
+          <div className="w-full max-w-full overflow-auto scrollbar-thin">
+            <div className="w-fit min-w-full px-1.5 md:px-4 py-2 flex flex-row items-center gap-x-4 justify-between rounded-t-md bg-slate-100 *:px-2 *:py-3 *:text-sm *:font-semibold ">
+              <div className="min-w-12 text-end">No</div>
+              <div className="min-w-64">user</div>
+              <div className="min-w-20 text-center">role</div>
+              <div className="min-w-20 text-center">gender</div>
+              <div className="min-w-32 text-center">phone</div>
+              <div className="min-w-40 text-center">action</div>
             </div>
-          </div>
-          <div className="body">
             {!loading ? (
-              users?.map((user, id) => (
+              users?.map((user: UserInterface) => (
                 <div
-                  key={id}
-                  className="tr min-w-full px-2 py-3 flex flex-row justify-between items-center gap-x-3 border-b border-slate-300"
+                  key={user.id}
+                  className="w-full px-1.5 md:px-4 py-2 flex flex-row items-center gap-x-4 justify-between border-b border-slate-100 *:px-2 *:py-3"
                 >
-                  <div className="th min-w-12 text-end">{id + 1}</div>
-                  <div className="th min-w-64 flex flex-row items-center gap-3">
-                    <Avatar
-                      src={"http://localhost:8000" + user.user_detail?.profile}
-                    />
-                    <div className="">
-                      <p className="font-semibold">{user.name}</p>
-                      <p className="text-sm">{user.email}</p>
-                    </div>
+                  <div className="min-w-12 text-sm text-end">{user.id}</div>
+                  <div className="min-w-64 text-sm">{user.name}</div>
+                  <div className="min-w-20 text-sm text-center">
+                    {user.role}
                   </div>
-                  <div className="th min-w-20 text-end">{user.role}</div>
-                  <div className="th min-w-20 text-end">
+                  <div className="min-w-20 text-sm">
                     {user.user_detail?.gender}
                   </div>
-                  <div className="th min-w-32 text-end">
+                  <div className="min-w-32 text-sm text-end">
                     {user.user_detail?.phone}
                   </div>
-                  <div className="th min-w-40 flex flex-row items-center justify-center gap-x-2">
-                    <div className="p-1 rounded bg-red-100 cursor-pointer">
-                      <DeleteOutlineOutlined
-                        className="text-red-600"
-                        onClick={() => deleteUser(user.id)}
-                      />
-                    </div>
+                  <div className="min-w-40 flex flex-row items-center justify-center gap-x-2">
                     <Link
                       to={`/dashboard/users/edit/${user.id}`}
                       className="p-1 rounded bg-yellow-100 cursor-pointer"
                     >
                       <EditNoteOutlined className="text-yellow-600" />
                     </Link>
+                    <div className="p-1 rounded bg-red-100 cursor-pointer">
+                      <DeleteOutlineOutlined
+                        className="text-red-600"
+                        onClick={() => deleteUser(user.id)}
+                      />
+                    </div>
                   </div>
                 </div>
               ))
