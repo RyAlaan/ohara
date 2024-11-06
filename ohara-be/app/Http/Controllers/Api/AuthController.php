@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -41,6 +42,11 @@ class AuthController extends Controller
             'email'     => $request->email,
             'password'  => bcrypt($request->password),
             'role'      => 'user',
+        ]);
+
+        // create user detail
+        UserDetail::create([
+            'user_id' => $user->id,
         ]);
 
         //return response JSON user is created

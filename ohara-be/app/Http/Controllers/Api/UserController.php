@@ -80,7 +80,7 @@ class UserController extends Controller
     {
         // validate data
         $validator = Validator::make($request->all(), [
-            'name' => 'required|min:6|',
+            'name' => 'required|min:6',
             'email' =>  'required|email|unique:users',
             'password' => 'required|min:6',
             'role' => 'nullable',
@@ -177,7 +177,7 @@ class UserController extends Controller
     {
         // validate data
         $validator = Validator::make($request->all(), [
-            'name' => 'required|min:6|',
+            'name' => 'required|min:6',
             'role' => 'required',
             'phone' => 'required|unique:user_details',
             'address' => 'required',
@@ -218,17 +218,18 @@ class UserController extends Controller
         // update user detail
         if ($request->hasFile('profile')) {
 
+            // delete old image
+            Storage::delete('public/books', $user->userDetail->profile);
+            
             // upload new image
             $profile = $request->file('profile');
-            $profile->storeAs('public/users', $profile->hashName());
-
-            // delete old image
-            Storage::delete('public/users/' . $user->userDetail->profile);
+            $profileName = $profile->hashName();
+            $profile->storeAs('public/books', $profileName);
 
             // update book with new image
             $user->userDetail->update([
                 'gender' => $request->gender,
-                'profile' => '/storage/users/' . $profile,
+                'profile' => $profileName,
                 'phone' => $phone,
                 'address' => $request->address,
             ]);

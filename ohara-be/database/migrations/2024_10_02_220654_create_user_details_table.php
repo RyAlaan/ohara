@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("user_id");
             $table->string("profile")->nullable();
-            $table->enum("gender", ["male", "female"]);
-            $table->text("address");
-            $table->string("phone");
+            $table->enum("gender", ["male", "female"])->nullable()->default(null);
+            $table->text("address")->nullable();
+            $table->string("phone")->nullable();
             $table->timestamps();
             $table->foreign("user_id")->references("id")->on("users")->onUpdate("CASCADE")->onDelete("CASCADE");
         });

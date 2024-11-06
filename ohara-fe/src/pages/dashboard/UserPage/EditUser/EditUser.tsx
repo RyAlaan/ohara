@@ -13,45 +13,45 @@ import {
 import { clsx } from "clsx";
 import { UserInterface } from "../../../../interfaces/UserInterface";
 import { useParams } from "react-router-dom";
+import { useGetData } from "@/hooks/apiService";
+import { AddPhotoAlternateRounded } from "@mui/icons-material";
 
 const EditUserPage = () => {
   const [user, setUser] = useState<UserInterface | null>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{
+    message: string | null;
+    status: "success" | "error" | null;
+  }>({ message: null, status: "success" });
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [inputSelectVal, setInputSelectVal] = useState<any>({
+  const [inputSelectVal, setInputSelectVal] = useState<{
+    role: "admin" | "user" | "";
+    gender: "male" | "female" | "";
+  }>({
     role: "",
     gender: "",
   });
   const { id } = useParams();
 
-  useEffect(() => {
+  const fetchUser = async () => {
     setIsLoading(true);
 
-    axios
-      .get(`http://localhost:8000/api/users/${id}`, {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      .then((res) => {
-        setInputSelectVal((prevState: any) => ({
-          ...prevState,
-          role: res.data.data.role,
-          gender: res.data.data.user_detail.gender,
-        }));
-        setSelectedImage({
-          preview: "http://localhost:8000" + res.data.data.user_detail.profile,
-          file: null,
-        });
-        setUser(res.data.data);
-      })
-      .catch((res) => {
-        console.error(res.data.message);
-        setMessage(res.data.message);
-      })
-      .finally(() => setIsLoading(false));
+    const result = await useGetData(`/users/${id}`);
+    if (result.status) {
+      setUser(result.data);
+      setInputSelectVal({
+        role: result.data.role,
+        gender: result.data.user_detail?.gender || "",
+      });
+      setMessage({ message: result.message, status: "success" });
+    } else {
+      setMessage({ message: result.message, status: "error" });
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchUser();
   }, []);
 
   const handleSelectedImage = (e: any) => {
@@ -59,7 +59,7 @@ const EditUserPage = () => {
 
     if (file) {
       const fileUrl = URL.createObjectURL(file);
-      setSelectedImage({ preview: fileUrl, file: file });
+      setSelectedImage([fileUrl, file]);
     }
   };
 
@@ -80,10 +80,10 @@ const EditUserPage = () => {
     formData.append("gender", inputSelectVal.gender);
     formData.append("phone", e.currentTarget.phone.value);
     formData.append("address", e.currentTarget.address.value);
-    selectedImage.file && formData.append("profile", selectedImage.file);
+    formData.append("profile", selectedImage[1]);
 
     axios
-      .put(`http://localhost:8000/api/users/${id}`, formData, {
+      .post(`http://localhost:8000/api/users/${id}?_method=PUT`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Accept: "application/json",
@@ -91,13 +91,11 @@ const EditUserPage = () => {
         },
       })
       .then((res) => {
-        if (res.status === 201) {
-          window.location.href = "/dashboard/users";
-        }
+        window.location.href = "/dashboard/users";
       })
-      .catch((err) => {
+      .catch((err: any) => {
         if (err.response.data.statusCode === 422) {
-          console.error(err.response.data.message);
+          console.error(err.response);
         } else {
           setMessage(err.response.data.message);
         }
@@ -108,26 +106,30 @@ const EditUserPage = () => {
   // clear message
   useEffect(() => {
     setTimeout(() => {
-      message && setMessage("");
+      message &&
+        setMessage({
+          message: null,
+          status: null,
+        });
     }, 8000);
-  }, [message]);
+  }, []);
 
   return (
     <form
       onSubmit={(e) => handleSubmit(e)}
-      className="w-full p-6 flex flex-row gap-x-6"
+      className="w-full p-4 md:p-6 flex flex-col md:flex-row gap-x-6"
     >
       <Alert
         className={clsx(
-          { "translate-y-40": message },
+          { "translate-y-48": message.message },
           "right-1/2 translate-x-1/2 absolute -top-20  max-w-96 w-full text-justify transition-all duration-500 ease-linear z-[9999]"
         )}
         variant="filled"
-        severity="error"
+        severity={message.status ? message.status : "info"}
       >
-        {message}
+        {message.message}
       </Alert>
-      <div className="flex flex-col gap-y-6">
+      <div className="w-full md:w-6/12 xl:w-4/12 flex flex-col gap-y-6">
         <label
           htmlFor="cover"
           className="h-fit px-6 py-3 flex flex-col gap-y-3 rounded-lg bg-white"
@@ -145,12 +147,12 @@ const EditUserPage = () => {
               />
               {selectedImage ? (
                 <img
-                  src={selectedImage.preview}
+                  src={selectedImage[0]}
                   alt="selected image"
                   className="h-32 w-auto object-cover"
                 />
               ) : (
-                <AddPhotoAlternateRoundedIcon sx={{ fontSize: 60 }} />
+                <AddPhotoAlternateRounded sx={{ fontSize: 60 }} />
               )}
             </div>
             <p className="text-sm text-[#94A3B8]">
@@ -165,7 +167,7 @@ const EditUserPage = () => {
             <Select
               labelId="role"
               id="role-select"
-              value={inputSelectVal.role}
+              value={inputSelectVal.role && inputSelectVal.role}
               label="Role"
               name="role"
               className="border-2"

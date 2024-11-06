@@ -85,7 +85,7 @@ const AddUserPage = () => {
   return (
     <form
       onSubmit={(e) => handleSubmit(e)}
-      className="w-full p-6 flex flex-row gap-x-6"
+      className="w-full p-4 md:p-6 flex flex-col md:flex-row gap-y-4 gap-x-6"
     >
       <Alert
         className={clsx(
@@ -97,7 +97,7 @@ const AddUserPage = () => {
       >
         {message}
       </Alert>
-      <div className="xl:w-4/12 flex flex-col gap-y-6">
+      <div className="w-full md:w-6/12 xl:w-4/12 flex flex-col gap-y-6">
         <label
           htmlFor="profile"
           className="h-fit px-6 py-3 flex flex-col gap-y-3 xl:gap-y-16 rounded-lg bg-white"
@@ -123,7 +123,8 @@ const AddUserPage = () => {
             )}
           </div>
           <p className="text-sm text-[#94A3B8]">
-            Chose profile image. Only *.png, *.jpg and *.jpeg. Maximum file is 2MB{" "}
+            Chose profile image. Only *.png, *.jpg and *.jpeg. Maximum file is
+            2MB{" "}
           </p>
         </label>
         <div className="px-8 py-5 flex flex-col gap-y-6 bg-white">

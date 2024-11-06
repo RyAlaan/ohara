@@ -28,7 +28,7 @@ const style = {
 const DashboardUserPage = () => {
   const [users, setUsers] = useState<UserInterface[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [queryParam, _] = useSearchParams();
+  const [searchParam, setSearchParam] = useSearchParams();
   const [message, setMessage] = useState<{
     message: string | null;
     status: "success" | "error" | null;
@@ -37,11 +37,17 @@ const DashboardUserPage = () => {
     null
   );
 
+  const setPage = (page: string) => {
+    console.log("jembut");
+    setSearchParam({ page: page });
+    // searchParam.append("page", page);
+  };
+
   const deleteUser = async (id: number) => {
     setLoading(true);
     const result = await useDeleteData(`/users/${id}`);
     if (result.status) {
-      // window.location.reload();
+      window.location.reload();
       setMessage({ message: result.message, status: "success" });
     } else {
       setMessage({ message: result.message, status: "error" });
@@ -63,11 +69,11 @@ const DashboardUserPage = () => {
     async function fetchUser() {
       setLoading(true);
       const param = {
-        perPage: queryParam.get("perPage"),
-        page: queryParam.get("page"),
-        name: queryParam.get("name"),
-        email: queryParam.get("email"),
-        role: queryParam.get("role"),
+        perPage: searchParam.get("perPage"),
+        page: searchParam.get("page"),
+        name: searchParam.get("name"),
+        email: searchParam.get("email"),
+        role: searchParam.get("role"),
       };
 
       const result = await useGetData("/users", param);
@@ -82,7 +88,7 @@ const DashboardUserPage = () => {
     }
 
     fetchUser();
-  }, []);
+  }, [searchParam.get("page")]);
 
   return (
     <div className="min-h-screen w-full p-6 overflow-hidden">
@@ -98,7 +104,7 @@ const DashboardUserPage = () => {
       </Alert>
       <div className="w-full px-5 pt-3 pb-5 flex flex-col gap-y-6 rounded xl:rounded-lg bg-white overflow-hidden">
         <div className="w-full flex flex-col md:flex-row justify-between gap-y-3 overflow-hidden">
-          <h4 className="font-semibold text-xl">All Books</h4>
+          <h4 className="font-semibold text-xl">All Users</h4>
           <div className="w-fit flex flex-col md:flex-row gap-y-2 gap-x-5">
             <div className="flex flex-row items-center gap-x-3">
               <p className="text-sm font-medium">Categories</p>
@@ -115,7 +121,7 @@ const DashboardUserPage = () => {
               className="w-fit p-2 md:p-2.5 flex flex-row gap-1 md:gap-2 rounded-md text-sm font-bold text-purple-700 bg-purple-100"
             >
               <Add sx={{ fontSize: 20 }} />
-              <p>Add Book</p>
+              <p>Add Users</p>
             </Link>
           </div>
         </div>
@@ -137,7 +143,14 @@ const DashboardUserPage = () => {
                   className="w-full px-1.5 md:px-4 py-2 flex flex-row items-center gap-x-4 justify-between border-b border-slate-100 *:px-2 *:py-3"
                 >
                   <div className="min-w-12 text-sm text-end">{user.id}</div>
-                  <div className="min-w-64 text-sm">{user.name}</div>
+                  <div className="min-w-64 text-sm flex items-center gap-x-2">
+                    <Avatar
+                      sx={{ width: 24, height: 24 }}
+                      alt={`${user.role}`}
+                      src={`${user.user_detail?.profile}`}
+                    />
+                    <p>{user.name}</p>
+                  </div>
                   <div className="min-w-20 text-sm text-center">
                     {user.role}
                   </div>
@@ -176,10 +189,11 @@ const DashboardUserPage = () => {
             <Pagination
               count={Math.ceil(pagination.totalData / pagination.perPage)}
               page={
-                queryParam.get("page")
-                  ? parseInt(queryParam.get("page") as string)
+                searchParam.get("page")
+                  ? parseInt(searchParam.get("page") as string)
                   : 1
               }
+              onChange={(_, num) => setPage(String(num))}
               variant="outlined"
               shape="rounded"
             />

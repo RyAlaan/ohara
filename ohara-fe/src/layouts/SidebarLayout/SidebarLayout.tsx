@@ -45,15 +45,15 @@ const SidebarLayout = () => {
         <DashboardOutlined />
         Dashboard
       </SidebarBtn>
-      <SidebarBtn url="/dashboard/books/">
+      <SidebarBtn url="/dashboard/books">
         <LibraryBooksOutlined />
         Books
       </SidebarBtn>
-      <SidebarBtn url="/dashboard/users/">
+      <SidebarBtn url="/dashboard/users">
         <GroupOutlined />
         Users
       </SidebarBtn>
-      <SidebarBtn url="/dashboard/borrowings/">
+      <SidebarBtn url="/dashboard/borrowings">
         <AddBoxOutlined />
         Borrowings
       </SidebarBtn>

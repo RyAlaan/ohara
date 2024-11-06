@@ -19,9 +19,12 @@ class BookController extends Controller
         // query data
         $query = Book::query();
 
-        // localhost:8000/api/books?title=Berotak senku
-
         // search by 
+        if ($request->has('id')) {
+            $id = $request->query('id');
+            $query = $query->where('id', $id);
+        }
+
         if ($request->has('title')) {
             $title = $request->query('title');
             $query = $query->where('title', $title);
@@ -161,6 +164,27 @@ class BookController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // validate data
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'ISBN' => 'required|unique:books',
+            'release_date' => 'required|date',
+            'stock' => 'required|numeric|min:0',
+            'price' => 'required|numeric|min:1000',
+            'publisher' => 'required',
+            'synopsis' => 'required',
+            'cover' => 'required|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        if ($validator->failed()) {
+            return response()->json([
+                'status' => false,
+                'statusCode' => 422,
+                'message' => $validator->errors(),
+                'data' => null,
+            ], 422);
+        }
+
         // check is data exists
         $book = Book::find($id);
 
@@ -173,35 +197,16 @@ class BookController extends Controller
             ], 404);
         }
 
-        // validate data
-        $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'ISBN' => 'required|unique:books',
-            'release_date' => 'required|date',
-            'stock' => 'required|numeric|min:0',
-            'price' => 'required|numeric|min:1000',
-            'publisher' => 'required',
-            'synopsis' => 'required',
-            'cover' => 'required|images|mimes:jpg,jpeg,png|max:2048',
-        ]);
-
-        if (!$book) {
-            return response()->json([
-                'status' => false,
-                'statusCode' => 422,
-                'message' => $validator->errors(),
-                'data' => null,
-            ], 422);
-        }
-
+        $coverName = null;
         // delete and create new image
         if ($request->hasFile('cover')) {
+            // delete old image
+            Storage::delete('public/books', $book->cover);
+            
             // upload new image
             $cover = $request->file('cover');
-            $cover->storeAs('public/books'. $cover->hashName());
-
-            // delete old image
-            Storage::delete('public/books'. $cover->hashName());
+            $coverName = $cover->hashName();
+            $cover->storeAs('public/books', $coverName);
         }
 
        // define category
@@ -215,7 +220,7 @@ class BookController extends Controller
             'id' => $id,
             'title' => $request->title,
             'ISBN' => $request->ISBN,
-            'cover' => $request->hasFile('cover') ? $cover->hashName() : $book->cover,
+            'cover' => $coverName ?? $book->cover,
             'release_date' => $request->release_date,
             'stock' => $request->stock,
             'price' => $request->price,

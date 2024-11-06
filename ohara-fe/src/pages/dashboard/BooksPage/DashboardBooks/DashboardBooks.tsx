@@ -10,14 +10,15 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useSearchBooks } from "../../../../context/SearchBooksContext/SearchBooksContext";
 import { BookInterface } from "../../../../interfaces/BookInterface";
 import DashboardLayout from "@/layouts/DashboardLayout/DashboardLayout";
-import { useState } from "react";
-import { useDeleteData } from "@/hooks/apiService";
+import { useEffect, useState } from "react";
+import { useDeleteData, useGetData } from "@/hooks/apiService";
 import { PaginationInterface } from "@/interfaces/PaginationInterface";
 import { clsx } from "clsx";
 
 const DashboardBooksPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [queryParam, _] = useSearchParams();
+  const [books, setBooks] = useState<BookInterface[] | null>(null);
+  const [searchParam, setSearchParam] = useSearchParams();
   const [message, setMessage] = useState<{
     message: string | null;
     status: "success" | "error" | null;
@@ -25,9 +26,37 @@ const DashboardBooksPage = () => {
   const [pagination, setPagination] = useState<PaginationInterface | null>(
     null
   );
-  const { books } = useSearchBooks();
 
-  const deleteBook = async (id: number) => {
+  useEffect(() => {
+    async function fetchUser() {
+      setLoading(true);
+      const param = {
+        perPage: searchParam.get("perPage"),
+        page: searchParam.get("page"),
+        name: searchParam.get("name"),
+        title: searchParam.get("title"),
+        id: searchParam.get("id"),
+      };
+
+      const result = await useGetData("/books", param);
+      if (result.status) {
+        setMessage({ message: result.message, status: "success" });
+        setPagination(result.pagination);
+        setBooks(result.data);
+      } else {
+        setMessage({ message: result.message, status: "error" });
+      }
+      setLoading(false);
+    }
+
+    fetchUser();
+  }, [searchParam.get("page")]);
+
+  const setPage = (page: string) => {
+    setSearchParam({ ...searchParam, page: page });
+  };
+
+  const deleteBook = async (id: string) => {
     setLoading(true);
     const result = await useDeleteData(`/users/${id}`);
     if (result.status) {
@@ -84,6 +113,7 @@ const DashboardBooksPage = () => {
               <div className="min-w-40 text-right">Action</div>
             </div>
             {!loading ? (
+              books &&
               books?.map((book: BookInterface) => (
                 <div
                   key={book.id}
@@ -107,14 +137,27 @@ const DashboardBooksPage = () => {
                     </div>
                   </div>
                   <div className="h-full min-w-28 flex flex-row items-center justify-center">
-                    <div className="w-16 h-6 flex justify-center items-center bg-green-100 text-green-600 font-medium rounded">
+                    <div
+                      className={clsx(
+                        "w-16 h-6 flex justify-center items-center font-medium rounded",
+                        { "rounded bg-red-100 text-red-500": book.stock <= 0 }, // danger
+                        {
+                          "rounded bg-yellow-100 text-yellow-500":
+                            book.stock < 10,
+                        }, // warning
+                        {
+                          "rounded bg-green-100 text-green-500":
+                            book.stock >= 10,
+                        } // success
+                      )}
+                    >
                       <p>{book.stock}</p>
                     </div>
                   </div>
                   <div className="min-w-48 text-sm text-end font-semibold">
                     Nama guwa
                   </div>
-                  <div className="min-w-40 flex flex-row justify-center items-end gap-x-1">
+                  <div className="min-w-40 flex flex-row justify-center items-end gap-x-1 *:cursor-pointer">
                     <div className="p-1 rounded bg-blue-100">
                       <RemoveRedEyeOutlined className="text-blue-600" />
                     </div>
@@ -124,7 +167,10 @@ const DashboardBooksPage = () => {
                     >
                       <EditNoteOutlined className="text-yellow-600" />
                     </Link>
-                    <div className="p-1 rounded bg-red-100">
+                    <div
+                      className="p-1 rounded bg-red-100"
+                      onClick={() => deleteBook(book.id)}
+                    >
                       <DeleteOutlineOutlined className="text-red-600" />
                     </div>
                   </div>
@@ -143,10 +189,11 @@ const DashboardBooksPage = () => {
             <Pagination
               count={Math.ceil(pagination.totalData / pagination.perPage)}
               page={
-                queryParam.get("page")
-                  ? parseInt(queryParam.get("page") as string)
+                searchParam.get("page")
+                  ? parseInt(searchParam.get("page") as string)
                   : 1
               }
+              onChange={(_, num) => setPage(String(num))}
               variant="outlined"
               shape="rounded"
             />
