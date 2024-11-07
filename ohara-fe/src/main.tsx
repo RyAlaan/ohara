@@ -18,6 +18,9 @@ import EditBookPage from "./pages/dashboard/BooksPage/EditBook/EditBook";
 import DashboardUserPage from "./pages/dashboard/UserPage/DashboardUsers/DashboardUsers";
 import AddUserPage from "./pages/dashboard/UserPage/AddUser/AddUser";
 import EditUserPage from "./pages/dashboard/UserPage/EditUser/EditUser";
+import DashboardBorrowing from "./pages/dashboard/BorrowingPage/DashboardBorrowing";
+import BookPage from "./pages/public/BookPage/BookPage";
+import AdminPage from "./pages/middleware/IsAuth";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -26,19 +29,26 @@ createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route path="/" element={<AppShell />}>
             <Route index element={<HomePage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/dashboard/users/" element={<DashboardUserPage />} />
-            <Route path="/dashboard/users/add" element={<AddUserPage />} />
-            <Route
-              path="/dashboard/users/edit/:id"
-              element={<EditUserPage />}
-            />
-            <Route path="/dashboard/books" element={<DashboardBooksPage />} />
-            <Route path="/dashboard/books/add" element={<AddBookPage />} />
-            <Route
-              path="/dashboard/books/edit/:id"
-              element={<EditBookPage />}
-            />
+            <Route path="/books/:id" element={<BookPage />} />
+
+            <Route element={<AdminPage />}>
+              <Route path="dashboard">
+                <Route index element={<DashboardPage />} />
+                <Route path="users">
+                  <Route index element={<DashboardUserPage />} />
+                  <Route path="add" element={<AddUserPage />} />
+                  <Route path="edit/:id" element={<EditUserPage />} />
+                </Route>
+                <Route path="books">
+                  <Route index element={<DashboardBooksPage />} />
+                  <Route path="add" element={<AddBookPage />} />
+                  <Route path="edit/:id" element={<EditBookPage />} />
+                </Route>
+                <Route path="borrowings">
+                  <Route index element={<DashboardBorrowing />} />
+                </Route>
+              </Route>
+            </Route>
           </Route>
           <Route path="/auth">
             <Route path="/auth/login" element={<AuthPage />} />

@@ -2,7 +2,6 @@ import { useAuth } from "@/context/AuthContext/AuthContext";
 import {
   AddBoxOutlined,
   AutoStoriesOutlined,
-  BookmarksOutlined,
   DashboardOutlined,
   GroupOutlined,
   HomeOutlined,
@@ -23,10 +22,6 @@ const BottomNavbar = () => {
       <Link to="/">
         <HomeOutlined sx={{ fontSize: 24 }} />
         <p>Home</p>
-      </Link>
-      <Link to="/bookmarks">
-        <BookmarksOutlined sx={{ fontSize: 20 }} />
-        <p>Bookmark</p>
       </Link>
       <Link to="/borrowings">
         <AutoStoriesOutlined sx={{ fontSize: 24 }} />
@@ -69,10 +64,6 @@ const BottomNavbar = () => {
       <Link to="/">
         <HomeOutlined sx={{ fontSize: 24 }} />
         Home
-      </Link>
-      <Link to="/bookmarks">
-        <BookmarksOutlined sx={{ fontSize: 24 }} />
-        Bookmark
       </Link>
       <Link to="/borrowings">
         <AutoStoriesOutlined sx={{ fontSize: 24 }} />

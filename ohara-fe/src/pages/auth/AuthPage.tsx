@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import InputComponent from "../../components/Input/Input";
 import { clsx } from "clsx";
 import AuthLayout from "../../layouts/AuthLayout/AuthLayout";
@@ -9,6 +9,12 @@ const AuthPage = () => {
   const path = useLocation();
   const lastPath = path.pathname.split("/").pop();
   const { message } = useAuth();
+
+  const { user } = useAuth();
+
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div

@@ -1,7 +1,6 @@
 import {
   AddBoxOutlined,
   AutoStoriesOutlined,
-  BookmarksOutlined,
   DashboardOutlined,
   GroupOutlined,
   HomeOutlined,
@@ -23,10 +22,6 @@ const SidebarLayout = () => {
       <SidebarBtn url="/">
         <HomeOutlined />
         Home
-      </SidebarBtn>
-      <SidebarBtn url="/bookmarks">
-        <BookmarksOutlined />
-        Bookmark
       </SidebarBtn>
       <SidebarBtn url="/borrowings">
         <AutoStoriesOutlined />
@@ -70,10 +65,6 @@ const SidebarLayout = () => {
         <HomeOutlined />
         Home
       </SidebarBtn>
-      <SidebarBtn url="/bookmarks">
-        <BookmarksOutlined />
-        Bookmark
-      </SidebarBtn>
       <SidebarBtn url="/borrowings">
         <AutoStoriesOutlined />
         Borrowings
@@ -95,7 +86,9 @@ const SidebarLayout = () => {
     <div className="sidebar sticky top-0 h-screen w-fit px-6 pt-5 pb-10 hidden lg:flex flex-col justify-between bg-white">
       <div className="header flex flex-col gap-y-10">
         <div className="logo">
-          <h1 className="text-3xl font-bold text-center"><span className="text-purple-700">RY</span>OHARA</h1>
+          <h1 className="text-3xl font-bold text-center">
+            <span className="text-purple-700">RY</span>OHARA
+          </h1>
         </div>
         <div className="content flex flex-col gap-y-2.5">
           {renderSidebarContent()}
