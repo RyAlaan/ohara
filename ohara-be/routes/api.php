@@ -53,3 +53,7 @@ Route::prefix('/books')->group(function () {
     Route::post('/{id}', [BookController::class, 'update']);
     Route::delete('/{id}', [BookController::class, 'destroy']);
 });
+Route::middleware(['user.auth'])->group(function () {
+    // Rute untuk meminjam buku
+    Route::get('/borrow-book', [BookController::class, 'borrow'])->name('borrow.book');
+});
