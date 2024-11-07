@@ -18,7 +18,7 @@ import EditBookPage from "./pages/dashboard/BooksPage/EditBook/EditBook";
 import DashboardUserPage from "./pages/dashboard/UserPage/DashboardUsers/DashboardUsers";
 import AddUserPage from "./pages/dashboard/UserPage/AddUser/AddUser";
 import EditUserPage from "./pages/dashboard/UserPage/EditUser/EditUser";
-import DashboardBorrowing from "./pages/dashboard/BorrowingPage/DashboardBorrowing";
+import DashboardBorrowing from "./pages/dashboard/BorrowingPage/DashboardBorrowing/DashboardBorrowing";
 import BookPage from "./pages/public/BookPage/BookPage";
 import AdminPage from "./pages/middleware/IsAuth";
 

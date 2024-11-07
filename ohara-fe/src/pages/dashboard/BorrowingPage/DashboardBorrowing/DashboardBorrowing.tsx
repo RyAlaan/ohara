@@ -42,8 +42,8 @@ const DashboardBorrowing = () => {
         {message.message}
       </Alert>
       <div className="min-w-full col-span-12 px-5 pt-3 pb-5 flex flex-col gap-y-6 rounded xl:rounded-lg bg-white">
-        <div className="w-full flex flex-col md:flex-row justify-between gap-y-3 overflow-hidden">
-          <h4 className="font-semibold text-xl">All Books</h4>
+        <div className="w-full flex flex-col md:flex-row justify-between items-center gap-y-3 overflow-hidden">
+          <h4 className="font-semibold text-xl">All Borrowings</h4>
           <div className="w-fit flex flex-col md:flex-row gap-y-2 gap-x-5">
             <div className="flex flex-row items-center gap-x-3">
               <p className="text-sm font-medium">Status</p>
@@ -57,7 +57,7 @@ const DashboardBorrowing = () => {
             </div>
           </div>
         </div>
-        <div className="w-full max-w-full p-6 rounded-md">
+        <div className="w-full max-w-full rounded-md">
           <div className="w-full max-w-full overflow-auto scrollbar-thin">
             <div className="w-fit min-w-full px-1.5 md:px-4 py-2 flex flex-row items-center gap-x-4 justify-between rounded-t-md bg-slate-100 *:px-2 *:py-3 *:text-sm *:font-semibold ">
               <div className="min-w-28">Code</div>

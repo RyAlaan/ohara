@@ -103,7 +103,7 @@ const DashboardUserPage = () => {
         {message.message}
       </Alert>
       <div className="w-full px-5 pt-3 pb-5 flex flex-col gap-y-6 rounded xl:rounded-lg bg-white overflow-hidden">
-        <div className="w-full flex flex-col md:flex-row justify-between gap-y-3 overflow-hidden">
+        <div className="w-full flex flex-col md:flex-row justify-between items-center gap-y-3 overflow-hidden">
           <h4 className="font-semibold text-xl">All Users</h4>
           <div className="w-fit flex flex-col md:flex-row gap-y-2 gap-x-5">
             <div className="flex flex-row items-center gap-x-3">
@@ -126,7 +126,7 @@ const DashboardUserPage = () => {
           </div>
         </div>
         {/* begin table */}
-        <div className="w-full max-w-full p-6 rounded-md">
+        <div className="w-full max-w-full rounded-md">
           <div className="w-full max-w-full overflow-auto scrollbar-thin">
             <div className="w-fit min-w-full px-1.5 md:px-4 py-2 flex flex-row items-center gap-x-4 justify-between rounded-t-md bg-slate-100 *:px-2 *:py-3 *:text-sm *:font-semibold ">
               <div className="min-w-12 text-end">No</div>
@@ -149,7 +149,10 @@ const DashboardUserPage = () => {
                       alt={`${user.role}`}
                       src={`${user.user_detail?.profile}`}
                     />
-                    <p>{user.name}</p>
+                    <div className="text-left">
+                      <p className="font-medium">{user.name}</p>
+                      <p className="!font-normal text-xs">{user.email}</p>
+                    </div>
                   </div>
                   <div className="min-w-20 text-sm text-center">
                     {user.role}
