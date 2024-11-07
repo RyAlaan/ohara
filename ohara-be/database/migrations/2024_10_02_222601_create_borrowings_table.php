@@ -15,7 +15,8 @@ return new class extends Migration
             $table->string("id")->primary();
             $table->unsignedBigInteger("user_id");
             $table->string("book_id");
-            $table->timestamp("start_date")->userCurrent();
+            $table->timestamp("exp_date")->nullable();
+            $table->timestamp("start_date")->nullable();
             $table->timestamp("end_date")->nullable();
             $table->enum("status", ['awaiting confirmation', 'borrowed', 'lost', 'returned']);
             $table->timestamps();
