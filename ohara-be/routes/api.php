@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
+use App\Http\Controllers\Api\BorrowingController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Http\Request;
@@ -52,4 +53,12 @@ Route::prefix('/books')->group(function () {
     Route::get('/{id}', [BookController::class, 'show']);
     Route::post('/{id}', [BookController::class, 'update']);
     Route::delete('/{id}', [BookController::class, 'destroy']);
+});
+
+Route::prefix('/borrowings')->group(function () {
+    Route::post('/', [BorrowingController::class, 'store'])->middleware('auth.user');
+    Route::get('/', [BorrowingController::class, 'index'])->middleware('auth.admin');
+    Route::get('/{id}', [BorrowingController::class, 'show']);
+    Route::put('/{id}', [BorrowingController::class, 'update']);
+    Route::delete('/{id}', [BorrowingController::class, 'destroy']);
 });
