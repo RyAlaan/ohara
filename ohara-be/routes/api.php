@@ -59,6 +59,7 @@ Route::prefix('/borrowings')->group(function () {
     Route::post('/', [BorrowingController::class, 'store'])->middleware('auth.user');
     Route::get('/', [BorrowingController::class, 'index'])->middleware('auth.admin');
     Route::get('/{id}', [BorrowingController::class, 'show']);
-    Route::put('/{id}', [BorrowingController::class, 'update']);
+    Route::put('/confirm', [BorrowingController::class, 'confirmBorrowing']);
+    Route::put('/return/{id}', [BorrowingController::class, 'returnBorrowing']);
     Route::delete('/{id}', [BorrowingController::class, 'destroy']);
 });

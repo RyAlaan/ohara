@@ -267,24 +267,10 @@ class BorrowingController extends Controller
     /**
      * Return borrowing data.
      */
-    public function returnBorrowing(Request $request)
+    public function returnBorrowing(string $id)
     {
-        // validate data
-        $validator = Validator($request->all(), [
-            'borrowing_id' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'statusCode' => 422,
-                'message' => $validator->errors(),
-                'data' => null,
-            ], 422);
-        }
-
         // check is data exists
-        $borrowing = Borrowing::find($request->borrowing_id);
+        $borrowing = Borrowing::find($id);
 
         if (!$borrowing) {
             return response()->json([
