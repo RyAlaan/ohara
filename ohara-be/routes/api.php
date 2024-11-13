@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
+use App\Http\Controllers\Api\BorrowingController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Http\Request;
@@ -53,7 +54,12 @@ Route::prefix('/books')->group(function () {
     Route::post('/{id}', [BookController::class, 'update']);
     Route::delete('/{id}', [BookController::class, 'destroy']);
 });
-Route::middleware(['user.auth'])->group(function () {
-    // Rute untuk meminjam buku
-    Route::get('/borrow-book', [BookController::class, 'borrow'])->name('borrow.book');
+
+Route::prefix('/borrowings')->group(function () {
+    Route::post('/', [BorrowingController::class, 'store'])->middleware('auth.user');
+    Route::get('/', [BorrowingController::class, 'index'])->middleware('auth.admin');
+    Route::get('/{id}', [BorrowingController::class, 'show']);
+    Route::put('/confirm', [BorrowingController::class, 'confirmBorrowing']);
+    Route::put('/return/{id}', [BorrowingController::class, 'returnBorrowing']);
+    Route::delete('/{id}', [BorrowingController::class, 'destroy']);
 });

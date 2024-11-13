@@ -4,31 +4,28 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
-        // Memeriksa apakah pengguna sudah login
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'You must be logged in to borrow books.');
+        $user = auth()->guard('api')->user();
+
+        if ($user && $user->role === 'user') {
+            return $next($request->merge(['user_id' => $user->id]));
         }
 
-        // Memeriksa apakah pengguna memiliki role 'user'
-        $user = Auth::user();
-        if ($user->role !== 'user') {
-            return redirect()->route('home')->with('error', 'You are not authorized to borrow books.');
-        }
-
-        // Jika lolos pengecekan, lanjutkan ke request berikutnya
-        return $next($request);
+        return response()->json([
+            'status' => false,
+            'statusCode' => 401,
+            'message' => "you're unauthorized",
+            'data' => null
+        ], 401);
     }
 }

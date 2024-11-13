@@ -9,10 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Borrowing extends Model
 {
     use HasFactory;
+    protected  $primaryKey = 'id';
+    public $incrementing = false; 
 
     protected $fillable = [
+        'id',
         'user_id',
         'book_id',
+        'exp_date',
         'start_date',
         'end_date',
         'status',
