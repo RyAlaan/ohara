@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger("user_id");
             $table->string("book_id");
             $table->timestamp("exp_date")->nullable();
-            $table->timestamp("start_date")->nukwllable();
+            $table->timestamp("start_date")->nullable();
             $table->timestamp("end_date")->nullable();
             $table->enum("status", ['awaiting confirmation', 'borrowed', 'lost', 'returned']);
             $table->decimal('fine', 10, 2)->default(0);

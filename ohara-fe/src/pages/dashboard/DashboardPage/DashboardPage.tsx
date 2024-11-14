@@ -71,7 +71,7 @@ const DashboardPage = () => {
         />
       </div>
       <div className="col-span-12 flex flex-col md:flex-row gap-4 sm:gap-8">
-        <BorrowingConfirmationLayout books={books} />
+        <BorrowingConfirmationLayout />
         <AvailableVolsLayout books={books} />
       </div>
     </DashboardLayout>

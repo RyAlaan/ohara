@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import BookComponent from "../../components/BookComponent/BookComponent";
 import BookSkeleton from "../../components/BookComponent/BookSkeleton";
 import { useSearchBooks } from "../../context/SearchBooksContext/SearchBooksContext";
@@ -16,9 +17,9 @@ const BooksLayout = () => {
           ))
         : books &&
           books.map((book: BookInterface) => (
-            <div key={book.id}>
+            <Link to={`/books/${book.id}`} key={book.id}>
               <BookComponent book={book} />
-            </div>
+            </Link>
           ))}
     </div>
   );

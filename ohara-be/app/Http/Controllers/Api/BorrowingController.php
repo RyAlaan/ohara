@@ -109,7 +109,7 @@ class BorrowingController extends Controller
         }
 
         // find book data
-        $book = Book::where('id', $request->book_id);
+        $book = Book::find($request->book_id);
 
         if (!$book) {
             return response()->json([
@@ -138,7 +138,6 @@ class BorrowingController extends Controller
         $userData = Borrowing::where('user_id', $user_id)
             ->whereIn('status', ['awaiting confirmation', 'borrowed'])
             ->get();
-
 
         if ($userData->isNotEmpty()) {
             return response()->json([

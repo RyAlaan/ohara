@@ -1,22 +1,23 @@
-import { BookInterface } from "@/interfaces/BookInterface";
+import { BorrowingInterface } from "@/interfaces/BorrowingInterface";
+import { Link } from "react-router-dom";
 
-const BorrowingConfirmComponent = ({book}: { book: BookInterface }) => {
+const BorrowingConfirmComponent = ({borrowing}: { borrowing: BorrowingInterface }) => {
   return (
-    <div className="p-2 flex flex-row justify-between rounded-md border border-dashed">
+    <Link to={`/dashboard/borrowings/${borrowing.id}`} className="p-2 flex flex-row justify-between rounded-md border border-dashed">
       <div className="flex flex-col gap-y-[14px]">
         <div className="flex flex-row gap-x-2">
           <img
             src={
-              book.cover
-                ? book.cover
+              borrowing.book.cover
+                ? borrowing.book.cover
                 : "https://placehold.com/40x57"
             }
-            alt={book.title}
+            alt={borrowing.book.title}
             className="w-10 h-[57px] rounded"
           />
           <div className="flex flex-col gap-y-1">
-            <p className="font-bold text-xs">{book.title}</p>
-            {/* <p className="text-xs">volume {book.volume}</p> */}
+            <p className="font-semibold text-xs">{borrowing.book.title}</p>
+            <p className="text-xs">{borrowing.book.ISBN}</p>
           </div>
         </div>
         <div className="flex flex-row gap-x-1">
@@ -33,7 +34,7 @@ const BorrowingConfirmComponent = ({book}: { book: BookInterface }) => {
           Awaiting Confirmation
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

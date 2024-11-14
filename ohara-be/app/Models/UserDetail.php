@@ -33,9 +33,8 @@ class UserDetail extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getCoverAttribute($value)
+    public function getProfileAttribute($value)
     {
         return $value ? url('storage/users/' . $value) : null;
     }
-
 }

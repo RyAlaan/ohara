@@ -117,10 +117,7 @@ class UserController extends Controller
 
         UserDetail::create([
             'user_id' => $user->id,
-            'profile' =>
-            $request->file('profile')  ?
-                '/storage/users/' . $profile->hashName()
-                : "",
+            'profile' =>  $profileName,
             'gender' => $request->gender,
             'address' => $request->address,
             'phone' => $request->phone,
@@ -219,12 +216,12 @@ class UserController extends Controller
         if ($request->hasFile('profile')) {
 
             // delete old image
-            Storage::delete('public/books', $user->userDetail->profile);
+            Storage::delete('public/users', $user->userDetail->profile);
             
             // upload new image
             $profile = $request->file('profile');
             $profileName = $profile->hashName();
-            $profile->storeAs('public/books', $profileName);
+            $profile->storeAs('public/users', $profileName);
 
             // update book with new image
             $user->userDetail->update([

@@ -30,15 +30,8 @@ const DashboardBooksPage = () => {
   useEffect(() => {
     async function fetchUser() {
       setLoading(true);
-      const param = {
-        perPage: searchParam.get("perPage"),
-        page: searchParam.get("page"),
-        name: searchParam.get("name"),
-        title: searchParam.get("title"),
-        id: searchParam.get("id"),
-      };
 
-      const result = await useGetData("/books", param);
+      const result = await useGetData("/books", searchParam);
       if (result.status) {
         setMessage({ message: result.message, status: "success" });
         setPagination(result.pagination);
@@ -109,7 +102,7 @@ const DashboardBooksPage = () => {
               <div className="min-w-28">Code</div>
               <div className="min-w-60">Book</div>
               <div className="min-w-28 text-center">Stock</div>
-              <div className="min-w-48 text-right">Author</div>
+              <div className="min-w-48 text-center">Author</div>
               <div className="min-w-40 text-right">Action</div>
             </div>
             {!loading ? (
@@ -154,13 +147,13 @@ const DashboardBooksPage = () => {
                       <p>{book.stock}</p>
                     </div>
                   </div>
-                  <div className="min-w-48 text-sm text-end font-semibold">
-                    Nama guwa
+                  <div className="min-w-48 text-sm text-center">
+                    {book.authors?.map((item) => item.name).join(", ")}
                   </div>
                   <div className="min-w-40 flex flex-row justify-center items-end gap-x-1 *:cursor-pointer">
-                    <div className="p-1 rounded bg-blue-100">
+                    <Link to={`/books/${book.id}`} className="p-1 rounded bg-blue-100">
                       <RemoveRedEyeOutlined className="text-blue-600" />
-                    </div>
+                    </Link>
                     <Link
                       to={`/dashboard/books/edit/${book.id}`}
                       className="p-1 rounded bg-yellow-100"

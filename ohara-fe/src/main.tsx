@@ -20,7 +20,6 @@ import AddUserPage from "./pages/dashboard/UserPage/AddUser/AddUser";
 import EditUserPage from "./pages/dashboard/UserPage/EditUser/EditUser";
 import DashboardBorrowing from "./pages/dashboard/BorrowingPage/DashboardBorrowing/DashboardBorrowing";
 import BookPage from "./pages/public/BookPage/BookPage";
-import AdminPage from "./pages/middleware/IsAuth";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -31,22 +30,20 @@ createRoot(document.getElementById("root")!).render(
             <Route index element={<HomePage />} />
             <Route path="/books/:id" element={<BookPage />} />
 
-            <Route element={<AdminPage />}>
-              <Route path="dashboard">
-                <Route index element={<DashboardPage />} />
-                <Route path="users">
-                  <Route index element={<DashboardUserPage />} />
-                  <Route path="add" element={<AddUserPage />} />
-                  <Route path="edit/:id" element={<EditUserPage />} />
-                </Route>
-                <Route path="books">
-                  <Route index element={<DashboardBooksPage />} />
-                  <Route path="add" element={<AddBookPage />} />
-                  <Route path="edit/:id" element={<EditBookPage />} />
-                </Route>
-                <Route path="borrowings">
-                  <Route index element={<DashboardBorrowing />} />
-                </Route>
+            <Route path="dashboard">
+              <Route index element={<DashboardPage />} />
+              <Route path="users">
+                <Route index element={<DashboardUserPage />} />
+                <Route path="add" element={<AddUserPage />} />
+                <Route path="edit/:id" element={<EditUserPage />} />
+              </Route>
+              <Route path="books">
+                <Route index element={<DashboardBooksPage />} />
+                <Route path="add" element={<AddBookPage />} />
+                <Route path="edit/:id" element={<EditBookPage />} />
+              </Route>
+              <Route path="borrowings">
+                <Route index element={<DashboardBorrowing />} />
               </Route>
             </Route>
           </Route>
