@@ -5,8 +5,10 @@ use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\BorrowingController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 Route::prefix('/auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -62,3 +65,9 @@ Route::prefix('/borrowings')->group(function () {
     Route::put('/{id}', [BorrowingController::class, 'update']);
     Route::delete('/{id}', [BorrowingController::class, 'destroy']);
 });
+
+// Route::prefix('/dashboard')->middleware(['auth:sanctum', 'admin'])->group(function(){
+// });
+
+
+Route::get('/laporan/peminjaman', [DashboardController::class, 'exportLaporan'])->name('laporan.peminjaman');
