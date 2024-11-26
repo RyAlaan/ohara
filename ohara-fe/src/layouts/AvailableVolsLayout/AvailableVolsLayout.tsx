@@ -26,7 +26,11 @@ const AvailableVolsLayout = ({ books }: AvailableVolsLayoutInterface) => {
             >
               <div className="min-w-28 text-sm align-left">#{book.id}</div>
               <div className="min-w-60 text-sm flex flex-row items-center gap-x-2">
-                <img src={book.cover} alt="" className="w-[30px] h-[50px] rounded-sm" />
+                <img
+                  src={book.cover}
+                  alt=""
+                  className="w-[30px] h-[50px] rounded-sm"
+                />
                 <div className="flex flex-col">
                   <p className="font-semibold text-sm">{book.title}</p>
                   <p className="text-xs">{book.ISBN}</p>
@@ -38,7 +42,8 @@ const AvailableVolsLayout = ({ books }: AvailableVolsLayoutInterface) => {
                     "w-16 h-6 flex justify-center items-center font-medium rounded",
                     { "rounded bg-red-100 text-red-500": book.stock <= 0 }, // danger
                     {
-                      "rounded bg-yellow-100 text-yellow-500": book.stock < 10,
+                      "rounded bg-yellow-100 text-yellow-500":
+                        book.stock < 10 && book.stock > 0,
                     }, // warning
                     {
                       "rounded bg-green-100 text-green-500": book.stock >= 10,
@@ -54,7 +59,8 @@ const AvailableVolsLayout = ({ books }: AvailableVolsLayoutInterface) => {
                     "w-fit max-w-full px-2.5 py-0.5 text-sm font-medium self-end",
                     { "rounded bg-red-100 text-red-500": book.stock <= 0 }, // danger
                     {
-                      "rounded bg-yellow-100 text-yellow-500": book.stock < 10,
+                      "rounded bg-yellow-100 text-yellow-500":
+                        book.stock < 10 && book.stock > 0,
                     }, // warning
                     {
                       "rounded bg-green-100 text-green-500": book.stock >= 10,

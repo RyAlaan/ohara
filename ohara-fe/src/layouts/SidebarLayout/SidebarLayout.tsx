@@ -49,7 +49,7 @@ const SidebarLayout = () => {
         Users
       </SidebarBtn>
       <SidebarBtn url="/dashboard/borrowings">
-        <AddBoxOutlined />
+        <AutoStoriesOutlined />
         Borrowings
       </SidebarBtn>
     </>

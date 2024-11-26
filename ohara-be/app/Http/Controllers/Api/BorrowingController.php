@@ -92,24 +92,24 @@ class BorrowingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, $id)
     {
         // validate data
-        $validator = Validator::make($request->all(), [
-            'book_id' => 'required',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'book_id' => 'required',
+        // ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'statusCode' => 422,
-                'message' => 'please provide the book code',
-                'data' => $validator->errors()
-            ], 422);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'statusCode' => 422,
+        //         'message' => 'please provide the book code',
+        //         'data' => $validator->errors()
+        //     ], 422);
+        // }
 
         // find book data
-        $book = Book::find($request->book_id);
+        $book = Book::find($id);
 
         if (!$book) {
             return response()->json([
@@ -156,7 +156,7 @@ class BorrowingController extends Controller
         $borrowing = Borrowing::create([
             'id' => $borrowing_id,
             'user_id' => $user_id,
-            'book_id' => $request->book_id,
+            'book_id' => $id,
             'status' => 'awaiting confirmation',
             'exp_date' => $curr->addDays(2),
             'start_date' => null,

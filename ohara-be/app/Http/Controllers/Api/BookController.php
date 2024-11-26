@@ -214,7 +214,7 @@ class BookController extends Controller
 
         // define authors
         $authors = explode(', ', $request->authors);
-        
+
         // update book
         $book->update([
             'id' => $id,

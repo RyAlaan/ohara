@@ -56,7 +56,7 @@ Route::prefix('/books')->group(function () {
 });
 
 Route::prefix('/borrowings')->group(function () {
-    Route::post('/', [BorrowingController::class, 'store'])->middleware('auth.user');
+    Route::post('/{id}', [BorrowingController::class, 'store'])->middleware('auth.user');
     Route::get('/', [BorrowingController::class, 'index'])->middleware('auth.admin');
     Route::get('/{id}', [BorrowingController::class, 'show']);
     Route::put('/confirm', [BorrowingController::class, 'confirmBorrowing']);
