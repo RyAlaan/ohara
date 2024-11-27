@@ -8,7 +8,7 @@ export interface BorrowingInterface {
   exp_date: string;
   start_date: string;
   end_date: string;
-  status: "awaiting payment" | "borrowed" | "lost" | "returned";
+  status: "awaiting confirmation" | "borrowed" | "lost" | "returned";
   fine: number;
   created_at: string;
   edited_at: string;

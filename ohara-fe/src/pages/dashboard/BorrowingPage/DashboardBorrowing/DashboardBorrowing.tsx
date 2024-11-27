@@ -47,7 +47,7 @@ const DashboardBorrowing = () => {
       if (result.status) {
         setMessage({ message: result.message, status: "success" });
         console.log(result.data);
-        
+
         setPagination(result.pagination);
         setBorrowings(result.data);
       } else {
@@ -99,13 +99,13 @@ const DashboardBorrowing = () => {
             {!loading ? (
               borrowings &&
               borrowings?.map((borrowing: BorrowingInterface) => (
-                <div key={borrowing.id} className="w-full px-1.5 md:px-4 py-2 flex flex-row items-center gap-x-4 justify-between border-b border-slate-100 *:px-2 *:py-3">
-                  <Link
-                    to={`/dashboard/borrowings/`}
-                    className="w-28 text-sm align-left"
-                  >
-                    #{borrowing.id}
-                  </Link>
+                <div
+                  key={borrowing.id}
+                  className="w-full px-1.5 md:px-4 py-2 flex flex-row items-center gap-x-4 justify-between border-b border-slate-100 *:px-2 *:py-3"
+                >
+                  <div className="w-28 text-sm align-left">
+                    #{borrowing.id.split("-")[0]}...
+                  </div>
                   <Link
                     to={`/dashboard/users?email=${borrowing.user.email}`}
                     className="min-w-60 flex flex-row items-center gap-x-2 text-sm text-end font-medium"
@@ -124,8 +124,15 @@ const DashboardBorrowing = () => {
                       </p>
                     </div>
                   </Link>
-                  <Link to={`/dashboard/books/${borrowing.book.id}`} className="min-w-60 text-sm flex flex-row items-center gap-x-2">
-                    <img src={`${borrowing.book.cover}`} alt="" className="w-[30px] h-[50px]" />
+                  <Link
+                    to={`/books/${borrowing.book.id}`}
+                    className="min-w-60 text-sm flex flex-row items-center gap-x-2"
+                  >
+                    <img
+                      src={`${borrowing.book.cover}`}
+                      alt=""
+                      className="w-[30px] h-[50px] rounded-sm"
+                    />
                     <div className="flex flex-col">
                       <p className="font-semibold">{borrowing.book.title}</p>
                       <p>{borrowing.book.ISBN}</p>
@@ -134,14 +141,14 @@ const DashboardBorrowing = () => {
                   <div className="h-full min-w-32 flex flex-row items-center justify-center">
                     <div
                       className={clsx(
-                        "flex justify-center items-center text-sm text-center font-medium rounded bg-yellow-100 text-yellow-500",
+                        "px-1 py-0.5 flex justify-center items-center text-sm text-center font-medium rounded bg-yellow-100 text-yellow-500",
                         {
                           "rounded bg-red-100 text-red-500":
                             borrowing.status == "lost",
                         }, // danger
                         {
                           "rounded bg-yellow-100 text-yellow-500":
-                            borrowing.status == "awaiting payment",
+                            borrowing.status == "awaiting confirmation",
                         }, // warning
                         {
                           "rounded bg-blue-100 text-blue-500":
@@ -157,19 +164,13 @@ const DashboardBorrowing = () => {
                     </div>
                   </div>
                   <div className="min-w-28 flex flex-row justify-end items-end gap-x-1 *:cursor-pointer">
-                    <div className="p-1 rounded bg-blue-100">
+                    <Link
+                      to={`/dashboard/borrowings/${borrowing.id}`}
+                      className="p-1 rounded bg-blue-100"
+                    >
                       <RemoveRedEyeOutlined className="text-blue-600" />
-                    </div>
-                    {/* <Link
-                      to={`/dashboard/books/edit/${book.id}`}
-                      className="p-1 rounded bg-yellow-100"
-                    >
-                      <EditNoteOutlined className="text-yellow-600" />
-                    </Link> */}
-                    <div
-                      className="p-1 rounded bg-red-100"
-                      //   onClick={() => deleteBook(book.id)}
-                    >
+                    </Link>
+                    <div className="p-1 rounded bg-red-100">
                       <DeleteOutlineOutlined className="text-red-600" />
                     </div>
                   </div>

@@ -112,12 +112,7 @@ const DashboardBooksPage = () => {
                   key={book.id}
                   className="w-full px-1.5 md:px-4 py-2 flex flex-row items-center gap-x-4 justify-between border-b border-slate-100 *:px-2 *:py-3"
                 >
-                  <Link
-                    to={`/dashboard/books/${book.id}`}
-                    className="min-w-28 text-sm align-left"
-                  >
-                    #{book.id}
-                  </Link>
+                  <div className="min-w-28 text-sm align-left">#{book.id}</div>
                   <div className="min-w-60 text-sm flex flex-row items-center gap-x-2">
                     <img
                       src={book.cover}
@@ -136,7 +131,7 @@ const DashboardBooksPage = () => {
                         { "rounded bg-red-100 text-red-500": book.stock <= 0 }, // danger
                         {
                           "rounded bg-yellow-100 text-yellow-500":
-                            book.stock < 10,
+                            book.stock < 10 && book.stock > 0,
                         }, // warning
                         {
                           "rounded bg-green-100 text-green-500":
@@ -151,7 +146,10 @@ const DashboardBooksPage = () => {
                     {book.authors?.map((item) => item.name).join(", ")}
                   </div>
                   <div className="min-w-40 flex flex-row justify-center items-end gap-x-1 *:cursor-pointer">
-                    <Link to={`/books/${book.id}`} className="p-1 rounded bg-blue-100">
+                    <Link
+                      to={`/book/${book.id}`}
+                      className="p-1 rounded bg-blue-100"
+                    >
                       <RemoveRedEyeOutlined className="text-blue-600" />
                     </Link>
                     <Link

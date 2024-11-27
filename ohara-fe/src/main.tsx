@@ -20,6 +20,7 @@ import AddUserPage from "./pages/dashboard/UserPage/AddUser/AddUser";
 import EditUserPage from "./pages/dashboard/UserPage/EditUser/EditUser";
 import DashboardBorrowing from "./pages/dashboard/BorrowingPage/DashboardBorrowing/DashboardBorrowing";
 import BookPage from "./pages/public/BookPage/BookPage";
+import BorrowingDetailPage from "./pages/dashboard/BorrowingPage/BorrowingDetailPage/BorrowingDetailPage";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -29,6 +30,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/" element={<AppShell />}>
             <Route index element={<HomePage />} />
             <Route path="/books/:id" element={<BookPage />} />
+            <Route path="/borrowings/:id" element={<BorrowingDetailPage />} />
 
             <Route path="dashboard">
               <Route index element={<DashboardPage />} />
@@ -44,6 +46,7 @@ createRoot(document.getElementById("root")!).render(
               </Route>
               <Route path="borrowings">
                 <Route index element={<DashboardBorrowing />} />
+                <Route path=":id" element={<BorrowingDetailPage />} />
               </Route>
             </Route>
           </Route>
