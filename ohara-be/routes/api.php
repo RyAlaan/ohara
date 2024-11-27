@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\BorrowingController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,3 +64,5 @@ Route::prefix('/borrowings')->group(function () {
     Route::put('/return/{id}', [BorrowingController::class, 'returnBorrowing']);
     Route::delete('/{id}', [BorrowingController::class, 'destroy']);
 });
+
+Route::get('/dashboard', [DashboardController::class, 'index']);

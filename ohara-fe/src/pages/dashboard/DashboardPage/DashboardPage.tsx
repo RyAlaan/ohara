@@ -7,6 +7,7 @@ import BorrowingConfirmationLayout from "../../../layouts/BorrowingConfirmationL
 import CategoriesCardLayout from "../../../layouts/CategoriesCardLayout/CategoriesCardLayout";
 import AvailableVolsLayout from "../../../layouts/AvailableVolsLayout/AvailableVolsLayout";
 import DashboardLayout from "@/layouts/DashboardLayout/DashboardLayout";
+import { useGetData } from "@/hooks/apiService";
 
 const DashboardPage = () => {
   const { books } = useSearchBooks();
@@ -14,7 +15,22 @@ const DashboardPage = () => {
   const [curr, setCurr] = useState<number>(10);
   const [percentage, setPercentage] = useState<number>(0);
   const totalPage = 20;
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [dashboardData, setDashboardData] = useState<any>(null);
 
+  useEffect(() => {
+    setIsLoading(true);
+    async function fetchData() {
+      const result = await useGetData('/dashboard')
+      if (result.status) {
+        setDashboardData(result.data);
+      }
+    }
+
+    fetchData()
+    setIsLoading(false);
+  }, [])
+  
   useEffect(() => {
     setPercentage((curr / totalPage) * 100);
   }, [totalPage, curr]);
