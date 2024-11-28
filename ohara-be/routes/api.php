@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 Route::prefix('/auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -66,3 +68,9 @@ Route::prefix('/borrowings')->group(function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index']);
+
+// Route::prefix('/dashboard')->middleware(['auth:sanctum', 'admin'])->group(function(){
+// });
+
+
+Route::get('/laporan/peminjaman', [DashboardController::class, 'exportLaporan'])->name('laporan.peminjaman');
