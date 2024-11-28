@@ -95,7 +95,7 @@ const EditBookPage = () => {
     formData.append("authors", e.currentTarget.author.value);
 
     axios
-      .post(`http://localhost:8000/api/books/${id}?_method=PUT`, formData, {
+      .post(`http://localhost:8000/api/books/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Accept: "application/json",

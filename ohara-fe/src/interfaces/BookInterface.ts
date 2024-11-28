@@ -9,6 +9,7 @@ export interface BookInterface {
   synopsis: string;
   publisher: string;
   cover: string;
+  price: number;
   stock: number;
   release_date: string;
   authors?: AuthorInterface[];

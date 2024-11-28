@@ -8,6 +8,7 @@ import CategoriesCardLayout from "../../../layouts/CategoriesCardLayout/Categori
 import AvailableVolsLayout from "../../../layouts/AvailableVolsLayout/AvailableVolsLayout";
 import DashboardLayout from "@/layouts/DashboardLayout/DashboardLayout";
 import { useGetData } from "@/hooks/apiService";
+import { DashboardInterface } from "@/interfaces/DashboardInterface";
 
 const DashboardPage = () => {
   const { books } = useSearchBooks();
@@ -15,22 +16,26 @@ const DashboardPage = () => {
   const [curr, setCurr] = useState<number>(10);
   const [percentage, setPercentage] = useState<number>(0);
   const totalPage = 20;
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [dashboardData, setDashboardData] =
+    useState<DashboardInterface | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
     async function fetchData() {
-      const result = await useGetData('/dashboard')
+      const result = await useGetData("/dashboard");
       if (result.status) {
         setDashboardData(result.data);
       }
     }
-
-    fetchData()
+    fetchData();
     setIsLoading(false);
-  }, [])
-  
+  }, []);
+
+  useEffect(() => {
+    console.log(dashboardData);
+  }, [dashboardData]);
+
   useEffect(() => {
     setPercentage((curr / totalPage) * 100);
   }, [totalPage, curr]);
@@ -63,12 +68,14 @@ const DashboardPage = () => {
     currentTime.getDate()
   );
 
+  if (!dashboardData) return <p>Loading...</p>;
+
   return (
     <DashboardLayout>
       <div className="grid grid-cols-12 col-span-12 gap-4 sm:gap-8">
-        <CategoriesCardLayout />
-        <UsersCardLayout />
-        <BorrowingTargetLayout percentage={percentage} />
+        <CategoriesCardLayout data={dashboardData.categories} />
+        <UsersCardLayout data={dashboardData.users} />
+        <BorrowingTargetLayout data={dashboardData.borrowings} />
       </div>
       <div className="col-span-12 min-h-96 w-full bg-white rounded-xl">
         <p className="px-6 font-bold text-xl md:text-2xl pt-3">
@@ -88,7 +95,7 @@ const DashboardPage = () => {
       </div>
       <div className="col-span-12 flex flex-col md:flex-row gap-4 sm:gap-8">
         <BorrowingConfirmationLayout />
-        <AvailableVolsLayout books={books} />
+        <AvailableVolsLayout books={dashboardData.booksData} />
       </div>
     </DashboardLayout>
   );

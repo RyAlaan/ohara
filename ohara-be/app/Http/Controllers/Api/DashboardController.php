@@ -19,7 +19,7 @@ class DashboardController extends Controller
         // get data from database
         $categories = Category::with('books')->get();
         $users = User::all();
-        $borrowings = Borrowing::all();
+        $borrowings = Borrowing::where('status', 'awaiting confirmation')->get();
         $books = Book::latest()->take(5)->get();
 
         // setup date variable
@@ -56,12 +56,11 @@ class DashboardController extends Controller
         }
 
         // get categories data
-        // Inisialisasi array untuk menyimpan data kategori
         $categoriesData = [];
 
-        // Loop untuk mengisi data kategori
-        foreach ($categories as $value) {
+        foreach ($categories as $key => $value) {
             $categoriesData[] = [
+                'id' => $key,
                 'label' => $value->name,
                 'value' => $value->books->count(),
             ];
@@ -121,8 +120,6 @@ class DashboardController extends Controller
 
     public function exportLaporan(Request $request)
     {
-
-
         // Ambil bulan dan tahun dari request, default ke bulan dan tahun saat ini
         $bulan = $request->query('bulan', date('m'));
         $tahun = $request->query('tahun', date('Y'));

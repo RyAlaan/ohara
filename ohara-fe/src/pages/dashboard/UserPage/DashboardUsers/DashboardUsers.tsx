@@ -47,7 +47,10 @@ const DashboardUserPage = () => {
     setLoading(true);
     const result = await useDeleteData(`/users/${id}`);
     if (result.status) {
-      window.location.reload();
+      setUsers((prevUsers) => {
+        return prevUsers ? prevUsers.filter((user) => user.id !== id) : [];
+      });
+
       setMessage({ message: result.message, status: "success" });
     } else {
       setMessage({ message: result.message, status: "error" });

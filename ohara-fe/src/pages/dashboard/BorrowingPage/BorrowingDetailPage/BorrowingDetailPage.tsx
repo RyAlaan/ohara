@@ -31,10 +31,8 @@ const BorrowingDetailPage = () => {
 
   const synopsis = borrowing?.book?.synopsis || "";
 
-  // Set the character limit for the preview text
-  const previewText = synopsis.substring(0, 150) + "..."; // Show the first 150 characters
+  const previewText = synopsis.substring(0, 150) + "...";
 
-  // Function to toggle between showing more or less text
   const toggleContent = () => {
     setIsExpanded(!isExpanded);
   };

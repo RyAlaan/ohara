@@ -51,15 +51,28 @@ const DashboardBooksPage = () => {
 
   const deleteBook = async (id: string) => {
     setLoading(true);
-    const result = await useDeleteData(`/users/${id}`);
+    const result = await useDeleteData(`/books/${id}`);
     if (result.status) {
-      // window.location.reload();
+      setBooks((prevBooks) => {
+        return prevBooks ? prevBooks.filter((book) => book.id !== id) : [];
+      });
+
       setMessage({ message: result.message, status: "success" });
     } else {
       setMessage({ message: result.message, status: "error" });
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      message &&
+        setMessage({
+          message: null,
+          status: null,
+        });
+    }, 8000);
+  }, []);
 
   return (
     <div className="min-h-screen w-full p-6 overflow-hidden">

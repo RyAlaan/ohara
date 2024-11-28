@@ -220,13 +220,19 @@ class BookController extends Controller
             'id' => $id,
             'title' => $request->title,
             'ISBN' => $request->ISBN,
-            'cover' => $coverName ?? $book->cover,
             'release_date' => $request->release_date,
             'stock' => $request->stock,
             'price' => $request->price,
             'publisher' => $request->publisher,
             'synopsis' => $request->synopsis,
         ]);
+
+        // update cover if any
+        if ($coverName) {
+            $book->update([
+                'cover' => $coverName
+            ]);
+        }
 
         // connect book to categories
         $book->categories()->sync($categories);
