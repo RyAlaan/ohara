@@ -37,7 +37,7 @@ const BookPage = () => {
     console.log(result);
     
     if (result.status) {
-      window.location.href = `borrowings/${result.data.id}`
+      window.location.href = `/borrowings/${result.data.id}`
     } else {
       setMessage({message : result.message, status : "success"});
     }

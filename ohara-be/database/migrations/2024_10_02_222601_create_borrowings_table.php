@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp("exp_date")->nullable();
             $table->timestamp("start_date")->nullable();
             $table->timestamp("end_date")->nullable();
-            $table->enum("status", ['awaiting confirmation', 'borrowed', 'lost', 'returned']);
+            $table->enum("status", ['awaiting confirmation', 'borrowed', 'lost', 'returned', 'rejected']);
             $table->decimal('fine', 10, 2)->default(0);
             $table->timestamps();
             $table->foreign("user_id")->references("id")->on("users")->onDelete("CASCADE")->onUpdate("NO ACTION");

@@ -1,8 +1,9 @@
-import { useGetData } from "@/hooks/apiService";
+import { useDeleteData, useGetData, usePostData } from "@/hooks/apiService";
 import { BorrowingInterface } from "@/interfaces/BorrowingInterface";
 import { PaginationInterface } from "@/interfaces/PaginationInterface";
 import {
   Add,
+  CheckCircleOutlineRounded,
   DeleteOutlineOutlined,
   KeyboardArrowDownRounded,
   RemoveRedEyeOutlined,
@@ -26,6 +27,16 @@ const DashboardBorrowing = () => {
     null
   );
 
+  useEffect(() => {
+    setTimeout(() => {
+      message &&
+        setMessage({
+          message: null,
+          status: null,
+        });
+    }, 8000);
+  }, []);
+
   const setPage = (page: string) => {
     setSearchParam({ ...searchParam, page: page });
   };
@@ -46,8 +57,6 @@ const DashboardBorrowing = () => {
       const result = await useGetData("/borrowings", param);
       if (result.status) {
         setMessage({ message: result.message, status: "success" });
-        console.log(result.data);
-
         setPagination(result.pagination);
         setBorrowings(result.data);
       } else {
@@ -58,6 +67,38 @@ const DashboardBorrowing = () => {
 
     fetchBorrowing();
   }, []);
+
+  const handleConfirmBorrowing = async (
+    id: string,
+    url: string,
+    status: "borrowed" | "returned"
+  ) => {
+    try {
+      const result = await usePostData(url, {});
+
+      if (result.status) {
+        setMessage({ message: result.message, status: "success" });
+
+        setBorrowings((prevBorrowings) =>
+          prevBorrowings
+            ? prevBorrowings.map((borrowing) =>
+                borrowing.id === id
+                  ? { ...borrowing, status: status }
+                  : borrowing
+              )
+            : []
+        );
+      } else {
+        setMessage({ message: result.message, status: "error" });
+      }
+    } catch (error) {
+      console.error("Error confirming borrowing:", error);
+      setMessage({
+        message: "Failed to confirm borrowing. Please try again.",
+        status: "error",
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen w-full p-6 overflow-x-hidden">
@@ -141,26 +182,27 @@ const DashboardBorrowing = () => {
                   <div className="h-full min-w-32 flex flex-row items-center justify-center">
                     <div
                       className={clsx(
-                        "px-1 py-0.5 flex justify-center items-center text-sm text-center font-medium rounded bg-yellow-100 text-yellow-500",
+                        "w-32 px-1 py-0.5 flex justify-center items-center text-sm text-center font-medium rounded",
                         {
-                          "rounded bg-red-100 text-red-500":
-                            borrowing.status == "lost",
+                          "bg-red-100 text-red-500":
+                            borrowing.status == "lost" ||
+                            borrowing.status == "rejected",
                         }, // danger
                         {
-                          "rounded bg-yellow-100 text-yellow-500":
+                          "bg-yellow-100 text-yellow-500":
                             borrowing.status == "awaiting confirmation",
                         }, // warning
                         {
-                          "rounded bg-blue-100 text-blue-500":
+                          "bg-blue-100 text-blue-500":
                             borrowing.status == "borrowed",
                         }, // info
                         {
-                          "rounded bg-green-100 text-green-500":
+                          "bg-green-100 text-green-500":
                             borrowing.status == "returned",
                         } // success
                       )}
                     >
-                      <p>Awaiting Confirmation</p>
+                      <p>{borrowing.status}</p>
                     </div>
                   </div>
                   <div className="min-w-28 flex flex-row justify-end items-end gap-x-1 *:cursor-pointer">
@@ -170,9 +212,29 @@ const DashboardBorrowing = () => {
                     >
                       <RemoveRedEyeOutlined className="text-blue-600" />
                     </Link>
-                    <div className="p-1 rounded bg-red-100">
-                      <DeleteOutlineOutlined className="text-red-600" />
-                    </div>
+                    {borrowing.status === "awaiting confirmation" ||
+                    borrowing.status === "borrowed" ? (
+                      <div className="p-1 rounded bg-green-100">
+                        <CheckCircleOutlineRounded
+                          onClick={
+                            borrowing.status === "awaiting confirmation"
+                              ? () =>
+                                  handleConfirmBorrowing(
+                                    borrowing.id,
+                                    `/borrowings/confirm/${borrowing.id}`,
+                                    "borrowed"
+                                  )
+                              : () =>
+                                  handleConfirmBorrowing(
+                                    borrowing.id,
+                                    `/borrowings/return/${borrowing.id}`,
+                                    "returned"
+                                  )
+                          }
+                          className="text-green-600"
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               ))

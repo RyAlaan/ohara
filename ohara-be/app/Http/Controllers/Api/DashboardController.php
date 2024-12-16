@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Borrowing;
 use App\Models\Category;
-use App\Models\Peminjaman;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -19,7 +18,7 @@ class DashboardController extends Controller
         // get data from database
         $categories = Category::with('books')->get();
         $users = User::all();
-        $borrowings = Borrowing::where('status', 'awaiting confirmation')->get();
+        $borrowings = Borrowing::where('status', 'awaiting confirmation')->with(['book.categories', 'book.authors', 'user.userDetail'])->get();
         $books = Book::latest()->take(5)->get();
 
         // setup date variable
@@ -31,26 +30,26 @@ class DashboardController extends Controller
 
         // get user percentage
         $usersLastMonth = User::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
-            ->get();
+            ->count();
 
         $usersThisMonth = User::whereBetween('created_at', [$currMonthStart, $currMonthEnd])
-            ->get();
+            ->count();
 
-        if ($usersLastMonth->count() == 0) {
-            $usersPercentage = $usersThisMonth->count() > 0 ? 100 : 0;
+        if ($usersLastMonth == 0) {
+            $usersPercentage = $usersThisMonth > 0 ? 100 : 0;
         } else {
             $usersPercentage = (($usersThisMonth - $usersLastMonth) / $usersLastMonth) * 100;
         }
 
         // get borrowing percentage
         $borrowingLastMonth = User::whereBetween('created_at', [$lastMonthStart, $lastMonthEnd])
-            ->get();
+            ->count();
 
         $borrowingThisMonth = User::whereBetween('created_at', [$currMonthStart, $currMonthEnd])
-            ->get();
+            ->count();
 
-        if ($borrowingLastMonth->count() == 0) {
-            $borrowingPercentage = $borrowingThisMonth->count() > 0 ? 100 : 0;
+        if ($borrowingLastMonth == 0) {
+            $borrowingPercentage = $borrowingThisMonth > 0 ? 100 : 0;
         } else {
             $borrowingPercentage = (($borrowingThisMonth - $borrowingLastMonth) / $borrowingLastMonth) * 100;
         }
@@ -79,7 +78,7 @@ class DashboardController extends Controller
             'label' => 'others',
             'value' => $othersSum,
         ];
-        
+
         $categoriesData = $topCategories;
 
 
@@ -118,30 +117,30 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function exportLaporan(Request $request)
-    {
-        // Ambil bulan dan tahun dari request, default ke bulan dan tahun saat ini
-        $bulan = $request->query('bulan', date('m'));
-        $tahun = $request->query('tahun', date('Y'));
+    // public function exportLaporan(Request $request)
+    // {
+    //     // Ambil bulan dan tahun dari request, default ke bulan dan tahun saat ini
+    //     $bulan = $request->query('bulan', date('m'));
+    //     $tahun = $request->query('tahun', date('Y'));
 
-        // Ambil data peminjaman dalam rentang waktu sebulan
-        $peminjaman = Borrowing::whereMonth('start_date', $bulan)
-            ->whereYear('start_date', $tahun)
-            ->get();
+    //     // Ambil data peminjaman dalam rentang waktu sebulan
+    //     $peminjaman = Borrowing::whereMonth('start_date', $bulan)
+    //         ->whereYear('start_date', $tahun)
+    //         ->get();
 
-        // Siapkan data untuk dikirim ke view PDF
-        $data = [
-            'peminjaman' => $peminjaman,
-            'bulan' => $bulan,
-            'tahun' => $tahun,
-        ];
+    //     // Siapkan data untuk dikirim ke view PDF
+    //     $data = [
+    //         'peminjaman' => $peminjaman,
+    //         'bulan' => $bulan,
+    //         'tahun' => $tahun,
+    //     ];
 
-        // Generate PDF
-        $pdf = Pdf::loadView('laporan.peminjaman', $data);
+    //     // Generate PDF
+    //     $pdf = Pdf::loadView('laporan.peminjaman', $data);
 
-        // Return PDF sebagai response streaming
-        return response()->streamDownload(function() use ($pdf) {
-            echo $pdf->output();
-        }, 'laporan_peminjaman_' . $bulan . '-' . $tahun . '.pdf');
-    }
+    //     // Return PDF sebagai response streaming
+    //     return response()->streamDownload(function () use ($pdf) {
+    //         echo $pdf->output();
+    //     }, 'laporan_peminjaman_' . $bulan . '-' . $tahun . '.pdf');
+    // }
 }

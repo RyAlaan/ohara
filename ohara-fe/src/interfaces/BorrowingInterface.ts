@@ -8,7 +8,12 @@ export interface BorrowingInterface {
   exp_date: string;
   start_date: string;
   end_date: string;
-  status: "awaiting confirmation" | "borrowed" | "lost" | "returned";
+  status:
+    | "awaiting confirmation"
+    | "borrowed"
+    | "lost"
+    | "returned"
+    | "rejected";
   fine: number;
   created_at: string;
   edited_at: string;

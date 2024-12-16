@@ -11,14 +11,10 @@ import { useGetData } from "@/hooks/apiService";
 import { DashboardInterface } from "@/interfaces/DashboardInterface";
 
 const DashboardPage = () => {
-  const { books } = useSearchBooks();
-
-  const [curr, setCurr] = useState<number>(10);
-  const [percentage, setPercentage] = useState<number>(0);
-  const totalPage = 20;
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [dashboardData, setDashboardData] =
-    useState<DashboardInterface | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardInterface | null>(
+    null
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -31,14 +27,6 @@ const DashboardPage = () => {
     fetchData();
     setIsLoading(false);
   }, []);
-
-  useEffect(() => {
-    console.log(dashboardData);
-  }, [dashboardData]);
-
-  useEffect(() => {
-    setPercentage((curr / totalPage) * 100);
-  }, [totalPage, curr]);
 
   function getWeekDaysFromMonday(year: number, month: number, day: number) {
     let date = new Date(year, month, day);
@@ -68,7 +56,7 @@ const DashboardPage = () => {
     currentTime.getDate()
   );
 
-  if (!dashboardData) return <p>Loading...</p>;
+  if (!dashboardData || isLoading) return <p>Loading...</p>;
 
   return (
     <DashboardLayout>
@@ -94,7 +82,7 @@ const DashboardPage = () => {
         />
       </div>
       <div className="col-span-12 flex flex-col md:flex-row gap-4 sm:gap-8">
-        <BorrowingConfirmationLayout />
+        <BorrowingConfirmationLayout data={dashboardData.borrowingConfirmation} />
         <AvailableVolsLayout books={dashboardData.booksData} />
       </div>
     </DashboardLayout>

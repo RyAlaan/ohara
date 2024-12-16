@@ -157,7 +157,7 @@ const BorrowingDetailPage = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-y-12">
+        <div className="w-fit flex flex-col gap-y-12">
           <div className="hidden lg:flex flex-row items-center gap-x-5">
             <p className="max-w-3xl font-bold text-4xl">
               {borrowing.book.title}

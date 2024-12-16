@@ -1,22 +1,12 @@
 import { BookInterface } from "./BookInterface";
+import { BorrowingInterface } from "./BorrowingInterface";
 
 export interface DashboardInterface {
   categories: DashboardCategories;
   users: DashboardUsers;
   borrowings: DashboardBorrowings;
   borrowingThisWeek: any;
-  borrowingConfirmation: {
-    id: string;
-    user_id: number;
-    book_id: string;
-    exp_date: string;
-    start_date: string | null;
-    end_date: string | null;
-    status: string;
-    fine: string | number | null;
-    created_at: string;
-    updated_at: string;
-  }[];
+  borrowingConfirmation: BorrowingInterface[];
   booksData: BookInterface[];
 }
 

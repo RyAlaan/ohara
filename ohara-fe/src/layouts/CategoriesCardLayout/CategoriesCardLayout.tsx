@@ -5,7 +5,6 @@ import {
 import { PieChart } from "@mui/x-charts";
 
 const CategoriesCardLayout = ({ data }: { data: DashboardCategories }) => {
-
   return (
     <div className="categories-data col-span-12 md:col-span-6 xl:col-span-4 p-5 flex flex-col gap-y-4 md:gap-y-8 xl:gap-y-14 rounded-xl bg-white">
       <div className="flex flex-row gap-x-1.5 items-end">
@@ -25,6 +24,8 @@ const CategoriesCardLayout = ({ data }: { data: DashboardCategories }) => {
               endAngle: 360,
               cx: 45,
               cy: 45,
+              highlightScope: { fade: "global", highlight: "item" },
+              faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
             },
           ]}
           height={100}

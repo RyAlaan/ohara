@@ -88,26 +88,11 @@ class BorrowingController extends Controller
         ], 200);
     }
 
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request, $id)
     {
-        // validate data
-        // $validator = Validator::make($request->all(), [
-        //     'book_id' => 'required',
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json([
-        //         'status' => false,
-        //         'statusCode' => 422,
-        //         'message' => 'please provide the book code',
-        //         'data' => $validator->errors()
-        //     ], 422);
-        // }
-
         // find book data
         $book = Book::find($id);
 
@@ -195,24 +180,10 @@ class BorrowingController extends Controller
     /**
      * Confirm borrowing data.
      */
-    public function confirmBorrowing(Request $request)
+    public function confirmBorrowing(Request $request, $id)
     {
-        // validate data
-        $validator = Validator($request->all(), [
-            'borrowing_id' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'statusCode' => 422,
-                'message' => $validator->errors(),
-                'data' => null,
-            ], 422);
-        }
-
         // check is data exists
-        $borrowing = Borrowing::with(['book.categories', 'book.authors', 'user.userDetail'])->find($request->borrowing_id);
+        $borrowing = Borrowing::with(['book.categories', 'book.authors', 'user.userDetail'])->find($id);
 
         if (!$borrowing) {
             return response()->json([
